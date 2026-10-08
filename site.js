@@ -854,10 +854,11 @@
         String(site.background).replace(/"/g, "") + '")';
     }
 
-    document.querySelectorAll(".ref-title").forEach(function (el) {
+        document.querySelectorAll(".ref-title").forEach(function (el) {
       const key = el.dataset.homeLabel;
-      if (key && DEMO_DB.homeLabels && DEMO_DB.homeLabels[key]) {
-        el.textContent = DEMO_DB.homeLabels[key];
+      const labels = (DEMO_DB.site && DEMO_DB.site.homeLabels) || DEMO_DB.homeLabels || {};
+      if (key && labels[key]) {
+        el.textContent = labels[key];
       }
     });
 
