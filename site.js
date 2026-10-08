@@ -463,9 +463,78 @@
       `.visual-home-ad img,.visual-home-ad video{max-width:100%;display:block}`;
     document.head.appendChild(style);
 
-    document.querySelectorAll(".visual-home-ad").forEach(function (ad) {
-      if (ad.__builder) return;
-      ad.__builder = true;
+      function bindVisualAd(ad) {
+    if (ad.__builder) return;
+    ad.__builder = true;
+
+    let sx = 0, sy = 0, sw = 0, sh = 0, mode = "drag";
+
+    ad.addEventListener("pointerdown", function (e) {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      ad.setPointerCapture(e.pointerId);
+      const r = ad.getBoundingClientRect();
+      sx = e.clientX; sy = e.clientY; sw = r.width; sh = r.height;
+      mode = (e.clientX > r.right - 22 && e.clientY > r.bottom - 22) ? "resize" : "drag";
+      ad.classList.add("builder-drag");
+    });
+
+    ad.addEventListener("pointermove", function (e) {
+      if (!ad.hasPointerCapture(e.pointerId)) return;
+      const a = (DEMO_DB.ads || []).find(function (x) {
+        return Number(x.id) === Number(ad.dataset.adId);
+      });
+      if (!a) return;
+
+      if (mode === "resize") {
+        const parent = ad.parentElement.getBoundingClientRect();
+        const nw = Math.max(40, Math.min(parent.width, sw + (e.clientX - sx)));
+        a.width = Math.round((nw / parent.width) * 100);
+        a.height = Math.max(0, Math.round(sh + (e.clientY - sy)));
+        ad.style.width = a.width + "%";
+        ad.style.height = a.height + "px";
+        const fr = ad.querySelector(".visual-home-frame");
+        if (fr) fr.style.height = a.height + "px";
+      } else {
+        let best = null, dist = Infinity;
+        document.querySelectorAll("[data-home-media-anchor]").forEach(function (z) {
+          const r = z.getBoundingClientRect();
+          const d = Math.abs(e.clientY - (r.top + r.height / 2));
+          if (d < dist) { dist = d; best = z; }
+        });
+        if (best) {
+          a.position = best.dataset.homeMediaAnchor;
+          a.slot = a.position;
+          best.appendChild(ad);
+        }
+      }
+    });
+
+    ad.addEventListener("pointerup", function (e) {
+      if (!ad.hasPointerCapture(e.pointerId)) return;
+      ad.releasePointerCapture(e.pointerId);
+      ad.classList.remove("builder-drag");
+      const a = (DEMO_DB.ads || []).find(function (x) {
+        return Number(x.id) === Number(ad.dataset.adId);
+      });
+      if (a) {
+        sessionStorage.setItem("PROBIV_PREVIEW_DB", JSON.stringify(DEMO_DB));
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({
+            type: "probiv-ad-change",
+            id: a.id,
+            changes: {
+              width: a.width,
+              height: a.height,
+              position: a.position,
+              align: a.align,
+              order: a.order
+            }
+          }, "*");
+        }
+      }
+    });
+  }
 
       let sx = 0, sy = 0, sw = 0, sh = 0, mode = "drag";
 
