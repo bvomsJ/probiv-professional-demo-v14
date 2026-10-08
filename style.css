@@ -44,7 +44,11 @@ body:before{content:"ДЕМО • СИНТЕТИЧЕСКИЙ МАКЕТ • НЕ
 .live-head b{flex:1}.live-head .input{width:150px;margin:0;height:30px}
 .live-note{font-size:10px;line-height:1.35;color:#746b5e;padding:8px 10px;background:#f4f0e7;border-bottom:1px solid #d7cdbc}
 .admin-live iframe{display:block;width:100%;height:720px;border:0;background:#f4f0e7}
-@media(max-width:1200px){.admin-shell{grid-template-columns:190px minmax(320px,1fr)}.admin-live{grid-column:2;position:static}.admin-panel{grid-column:2}}
+@media(max-width:1200px){
+  .admin-shell{grid-template-columns:190px minmax(320px,1fr)}
+  .admin-panel{grid-column:2;grid-row:1}
+  .admin-live{grid-column:1/-1;grid-row:2;position:static}
+}
 @media(max-width:800px){.admin-shell{grid-template-columns:1fr}.admin-live,.admin-panel{grid-column:1}.admin-live iframe{height:560px}}
 
 .home-media-block{box-sizing:border-box;margin:7px 0;position:relative}.home-media-frame{width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;background:transparent}.home-media-frame img,.home-media-frame video{display:block;width:100%;height:100%;object-fit:contain}.home-media-caption{text-align:center;font-size:10px;color:#756b5d;padding:3px 5px}.admin-live{min-width:0}.visual-ad-card{border-left:3px solid #b69152}.media-admin-preview{max-width:100%;max-height:180px;overflow:hidden;margin:7px 0;background:#ddd4c4;text-align:center}.media-admin-preview img{max-width:100%;max-height:180px;display:block;margin:auto}.live-ad-preview{margin:8px auto;text-align:center;overflow:hidden}.live-ad-preview img{display:block;max-width:100%;max-height:260px;margin:auto}
