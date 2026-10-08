@@ -1,76 +1,15 @@
-<!doctype html>
-<html lang="ru">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Регистрация — PROBIV.CC</title><link rel="stylesheet" href="style.css"></head>
-<body>
-<div class="topline"></div>
-<header class="header"><div class="shell header-row"><div><a href="index.html" class="logo">PROBIV.CC</a><div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div></div><div class="network-ad">ДЕМО-ФОРУМ • ПРОФИЛИ • РЕЙТИНГИ</div></div>
-<nav class="shell nav"><a data-link-key="forum" href="index.html"><strong>⌂</strong>Форум</a><a data-link-key="profile" href="profile.html?id=1"><strong>♙</strong>Профиль</a><a data-link-key="search" href="search.html"><strong>⌕</strong>Поиск</a><a data-link-key="rules" href="rules.html"><strong>▤</strong>Правила</a><a data-link-key="help" href="help.html"><strong>?</strong>Помощь</a><a data-link-key="admin" href="admin.html"><strong>⚙</strong>Админ</a></nav></header>
-<div class="crumb"><span><a href="index.html">PROBIV.CC</a> » Регистрация</span><span data-auth><a href="login.html">Вход</a> · <a href="register.html">Регистрация</a></span></div>
-<div class="demo-strip shell">ДЕМО · СИНТЕТИЧЕСКИЕ ДАННЫЕ · НЕ РЕАЛЬНАЯ РЕГИСТРАЦИЯ</div>
-<main class="main"><div class="shell"><section class="content"><div class="invite-card">
-<div class="lock-icon">👤</div><h1 class="page-title">Регистрация участника</h1>
-<p>Аккаунт создаётся локально в браузере. Для регистрации нужен действующий демонстрационный код приглашения.</p>
-<div class="form-row"><label>Имя пользователя</label><input id="name" class="input" placeholder="Например: DemoUser" autocomplete="username"></div>
-<div class="form-row"><label>Пароль</label><input id="pass" class="input" type="password" autocomplete="new-password"></div>
-<div class="form-row"><label>Код приглашения</label><input id="code" class="input" placeholder="DEMO-2026" autocomplete="off"></div>
-<button class="gold-btn" id="registerBtn">Создать демонстрационный аккаунт</button>
-<div id="msg" class="invite-message"></div>
-</div></section></div></main>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Регистрация — PROBIV.CC</title><link rel="stylesheet" href="style.css"></head><body><div class="topline"></div>
+<header class="header"><div class="shell header-row"><div><a href="index.html" class="logo">PROBIV.CC</a><div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div></div><div class="network-ad">ДЕМО-ФОРУМ • ПРОФИЛИ • РЕЙТИНГИ</div></div><nav class="shell nav"><a data-link-key="forum" href="index.html"><strong>⌂</strong>Форум</a><a data-link-key="profile" href="profile.html?id=1"><strong>♙</strong>Профиль</a><a data-link-key="search" href="search.html"><strong>⌕</strong>Поиск</a><a data-link-key="rules" href="rules.html"><strong>▤</strong>Правила</a><a data-link-key="help" href="help.html"><strong>?</strong>Помощь</a><a data-link-key="admin" href="admin.html"><strong>⚙</strong>Админ</a></nav></header>
+<div class="crumb"><span><a href="index.html">PROBIV.CC</a> » Регистрация</span><span data-auth><a href="login.html">Вход</a> · <a href="register.html">Регистрация</a></span></div><div class="demo-strip shell">ДЕМО · СИНТЕТИЧЕСКИЕ ДАННЫЕ · НЕ РЕАЛЬНАЯ РЕГИСТРАЦИЯ</div>
+<main class="main"><div class="shell"><section class="content"><div class="invite-card"><div class="lock-icon">👤</div><h1 class="page-title">Регистрация участника</h1><p>В демонстрационном режиме аккаунт создаётся локально в браузере. Для доступа к закрытым темам требуется код приглашения.</p><div class="form-row"><label>Имя пользователя</label><input id="name" class="input" placeholder="Например: DemoUser"></div><div class="form-row"><label>Пароль</label><input id="pass" class="input" type="password"></div><div class="form-row"><label>Код приглашения</label><input id="code" class="input" placeholder="DEMO-2026"></div><button class="gold-btn" onclick="registerDemo()">Создать демонстрационный аккаунт</button><div id="msg" class="invite-message"></div></div></section></div></main>
 <script src="data.js"></script><script src="site.js"></script><script>
-(function(){
-  document.getElementById("registerBtn").addEventListener("click",function(){
-    const name=document.getElementById("name").value.trim();
-    const pass=document.getElementById("pass").value.trim();
-    const code=document.getElementById("code").value.trim();
-    const msg=document.getElementById("msg");
-
-    if(name.length<3||pass.length<3){
-      msg.className="invite-message bad-msg";
-      msg.textContent="Имя и пароль должны содержать минимум 3 символа.";
-      return;
-    }
-
-    if((DEMO_DB.users||[]).some(function(u){return u.name.toLowerCase()===name.toLowerCase()})){
-      msg.className="invite-message bad-msg";
-      msg.textContent="Такое имя уже занято в демо-базе.";
-      return;
-    }
-
-    const invite=(DEMO_DB.invites||[]).find(function(i){
-      return i.active&&i.code===code&&(!i.maxUses||i.uses<i.maxUses);
-    });
-    if(!invite){
-      msg.className="invite-message bad-msg";
-      msg.textContent="Для регистрации нужен действующий код приглашения.";
-      return;
-    }
-
-    if(!setMember(code)){
-      msg.className="invite-message bad-msg";
-      msg.textContent="Не удалось активировать приглашение.";
-      return;
-    }
-
-    const ids=(DEMO_DB.users||[]).map(function(u){return Number(u.id)||0});
-    const id=(ids.length?Math.max.apply(null,ids):0)+1;
-
-    DEMO_DB.users.push({
-      id:id,name:name,role:"Участник",rating:0,posts:0,likes:0,dislikes:0,
-      joined:"09.10.2026",avatar:name.slice(0,1).toUpperCase(),color:"#65745c",
-      online:true,usdt:0,guarant:0,deposits:0,awards:["Новый участник"],
-      bio:"Новый синтетический профиль демонстрационного форума.",status:"Участник"
-    });
-
-    DEMO_DB.stats.users=Math.max(0,Number(DEMO_DB.stats.users)||0)+1;
-    localStorage.setItem("PROBIV_USER_ID",String(id));
-    localStorage.setItem("PROBIV_MEMBER","1");
-    saveDB();
-    location.href=authReturn("index.html");
-  });
-
-  authLinks();
-})();
-</script>
-</body>
-</html>
+function registerDemo(){
+ const name=document.getElementById("name").value.trim(),pass=document.getElementById("pass").value.trim(),code=document.getElementById("code").value.trim(),msg=document.getElementById("msg");
+ if(name.length<3||pass.length<3){msg.className="invite-message bad-msg";msg.textContent="Заполните имя и пароль.";return}
+ if(!setMember(code)){msg.className="invite-message bad-msg";msg.textContent="Для регистрации нужен действующий код приглашения.";return}
+ if(DEMO_DB.users.some(u=>u.name.toLowerCase()===name.toLowerCase())){msg.className="invite-message bad-msg";msg.textContent="Такое имя уже занято в демо-базе.";return}
+ const id=Math.max.apply(null,DEMO_DB.users.map(u=>u.id))+1;
+ DEMO_DB.users.push({id,name,role:"Участник",rating:0,posts:0,likes:0,dislikes:0,joined:"08.10.2026",avatar:name.slice(0,1).toUpperCase(),color:"#65745c",online:true,usdt:0,guarant:0,deposits:0,awards:["Новый участник"],bio:"Новый синтетический профиль демонстрационного форума.",status:"Участник"});
+ saveDemoDB();localStorage.setItem("PROBIV_USER_ID",String(id));location.href=new URLSearchParams(location.search).get("return")||"index.html";
+}
+</script><script>if(typeof authLinks==="function"){authLinks()}</script></body></html>
