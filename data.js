@@ -3,11 +3,12 @@ site:{
   title:"PROBIV.CC",
   subtitle:"ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ",
   topAd:"РЕКЛАМНЫЙ БЛОК · DEMO",
-  heroBanners:["ДЕМОНСТРАЦИОННАЯ ПЛОЩАДКА","АНАЛИЗ • ЗАЩИТА • СОПРОВОЖДЕНИЕ"],
+  heroBanners:["","",""],
   footer:"ДЕМОНСТРАЦИОННЫЙ ФОРУМ • СИНТЕТИЧЕСКИЕ ДАННЫЕ",
   demoLabel:"ДЕМО · СИНТЕТИЧЕСКИЕ ДАННЫЕ · НЕ РЕАЛЬНЫЕ ПОЛЬЗОВАТЕЛИ И ОПЕРАЦИИ",
   background:"background.png",
-  networkAd:"ДЕМО-ФОРУМ • ПРОФИЛИ • РЕЙТИНГИ"
+  networkAd:"ДЕМО-ФОРУМ • ПРОФИЛИ • РЕЙТИНГИ",
+  homeLabels:{newUsers:"Новые пользователи",rightRecent:"Последние сообщения",recommended:"Рекомендуемый контент",searchUser:"⌕ Найти пользователя",stats:"▥ Статистика форума"}
 },
 media:[],
 pages:{
@@ -19,7 +20,11 @@ categories:[
  {id:2,name:"Гарант-Сервис",description:"Демонстрационный раздел отзывов и обсуждений.",topics:24,messages:6400,section:"Основные разделы"},
  {id:3,name:"Проверенные продавцы",description:"Каталог синтетических профилей и отзывов.",topics:154,messages:2200,section:"Основные разделы"},
  {id:4,name:"Реклама на проекте",description:"Демонстрационные рекламные размещения.",topics:3,messages:26,section:"Основные разделы"},
- {id:5,name:"Обсуждения",description:"Общие обсуждения пользователей.",topics:87,messages:930,section:"Реклама и обсуждения"}
+ {id:5,name:"Обсуждения",description:"Общие обсуждения пользователей.",topics:87,messages:930,section:"Реклама и обсуждения"},
+ {id:6,name:"Отзывы",description:"Синтетические отзывы и демонстрационные обсуждения.",topics:12,messages:140,section:"Реклама и обсуждения"},
+ {id:7,name:"Полезное",description:"Демонстрационные материалы, инструкции и статьи.",topics:9,messages:120,section:"Основные разделы"},
+ {id:8,name:"Информация",description:"Справочная информация и объявления демонстрационного проекта.",topics:7,messages:80,section:"Основные разделы"},
+ {id:9,name:"Закрытый раздел",description:"Демонстрационный раздел только для участников.",topics:4,messages:40,section:"Закрытые разделы"}
 ],
 users:[
 {id:1,name:"reagent",role:"Обычный",rating:184,posts:954,likes:1495,dislikes:128,joined:"04.11.2014",avatar:"R",color:"#c72aa0",online:true,usdt:0,guarant:14,deposits:3000,awards:["Старожил","Активный участник"],bio:"Демонстрационный профиль участника форума.",status:"Обычный"},
@@ -97,7 +102,7 @@ invites:[{code:"DEMO-2026",label:"Демонстрационное пригла�
   }
   window.DEMO_DB.media=Array.isArray(window.DEMO_DB.media)?window.DEMO_DB.media:[];
   window.DEMO_DB.site=window.DEMO_DB.site||{};
-  window.DEMO_DB.site.heroBanners=Array.isArray(window.DEMO_DB.site.heroBanners)?window.DEMO_DB.site.heroBanners:["ДЕМОНСТРАЦИОННАЯ ПЛОЩАДКА","АНАЛИЗ • ЗАЩИТА • СОПРОВОЖДЕНИЕ"];
+  window.DEMO_DB.site.heroBanners=Array.isArray(window.DEMO_DB.site.heroBanners)?window.DEMO_DB.site.heroBanners:["","",""];
   window.DEMO_DB.site.mediaSlots=window.DEMO_DB.site.mediaSlots||{};
   window.DEMO_DB.threads=(window.DEMO_DB.threads||[]).map(t=>{t.posts=(t.posts||[]).map(x=>{x.mediaIds=Array.isArray(x.mediaIds)?x.mediaIds:[];return x});t.mediaIds=Array.isArray(t.mediaIds)?t.mediaIds:[];return t});
   if(!previewMode) localStorage.setItem("PROBIV_DEMO_DB",JSON.stringify(window.DEMO_DB));

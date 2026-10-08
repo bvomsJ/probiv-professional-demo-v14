@@ -1,28 +1,64 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PROBIV.CC — форум</title><link rel="stylesheet" href="style.css"></head><body><div class="topline"></div><header class="header"><div class="shell header-row"><div><a class="logo" href="index.html">PROBIV.CC</a><div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div></div><div class="network-ad">ДЕМО-ФОРУМ • ПРОФИЛИ • РЕЙТИНГИ</div></div><nav class="shell nav"><a data-link-key="forum" href="index.html"><strong>⌂</strong>Форум</a><a data-link-key="profile" href="profile.html?id=1"><strong>♙</strong>Профиль</a><a data-link-key="search" href="search.html"><strong>⌕</strong>Поиск</a><a data-link-key="rules" href="rules.html"><strong>▤</strong>Правила</a><a data-link-key="help" href="help.html"><strong>?</strong>Помощь</a><a data-link-key="admin" href="admin.html"><strong>⚙</strong>Админ</a></nav></header><div class="crumb"><span>PROBIV.CC » Форум</span><span><a href="login.html">Вход</a> · <a href="register.html">Регистрация</a> · <a href="search.html">Поиск</a></span></div><div class="demo-strip shell">ДЕМО · СИНТЕТИЧЕСКИЕ ДАННЫЕ · НЕ РЕАЛЬНЫЕ ПОЛЬЗОВАТЕЛИ И ОПЕРАЦИИ</div><main class="main reference-home"><div class="shell"><div class="reference-layout">
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PROBIV.CC — форум</title><link rel="stylesheet" href="style.css"></head><body><div class="topline"></div>
+<header class="header"><div class="shell header-row"><div><a class="logo" href="index.html">PROBIV.CC</a><div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div></div><div class="network-ad">ДЕМО-ФОРУМ • ПРОФИЛИ • РЕЙТИНГИ</div></div><nav class="shell nav"><a data-link-key="forum" href="index.html"><strong>⌂</strong>Форум</a><a data-link-key="profile" href="profile.html?id=1"><strong>♙</strong>Профиль</a><a data-link-key="search" href="search.html"><strong>⌕</strong>Поиск</a><a data-link-key="rules" href="rules.html"><strong>▤</strong>Правила</a><a data-link-key="help" href="help.html"><strong>?</strong>Помощь</a><a data-link-key="admin" href="admin.html"><strong>⚙</strong>Админ</a></nav></header>
+<div class="crumb"><span>PROBIV.CC » Форум</span><span data-auth><a href="login.html">Вход</a> · <a href="register.html">Регистрация</a> · <a href="search.html">Поиск</a></span></div>
+<div class="demo-strip shell">ДЕМО · СИНТЕТИЧЕСКИЕ ДАННЫЕ · НЕ РЕАЛЬНЫЕ ПОЛЬЗОВАТЕЛИ И ОПЕРАЦИИ</div>
+<main class="main reference-home"><div class="shell"><div class="reference-layout">
 <section class="ref-left">
-  <div class="ref-widget"><div class="ref-title">Новые пользователи <span>⌄</span></div><div id="newUsers"></div></div>
+  <div data-home-media-anchor="sidebarTop"></div>
+  <div class="ref-widget"><div class="ref-title" data-home-label="newUsers">Новые пользователи <span>⌄</span></div><div id="newUsers"></div></div>
+  <div data-home-media-anchor="sidebarAfterUsers"></div>
 </section>
 <section class="ref-center">
-  <div class="ref-toolbar"><div><b>Последние сообщения</b></div><div class="ref-tabs"><span class="active">Новые сообщения</span><span>Новые темы</span></div><button class="ref-refresh" onclick="location.reload()">↻</button></div>
+  <div data-home-media-anchor="pageTop"></div>
+  <div class="ref-toolbar"><div><b id="feedTitle">Последние сообщения</b></div><div class="ref-tabs"><span class="active" data-feed="messages">Новые сообщения</span><span data-feed="topics">Новые темы</span></div><button class="ref-refresh" title="Обновить" onclick="location.reload()">↻</button></div>
   <div id="referenceThreads" class="reference-threads"></div>
+  <div data-home-media-anchor="afterNormal"></div>
 </section>
 <aside class="ref-right">
-  <div class="ref-widget"><div class="ref-title">Последние сообщения</div><div id="rightRecent"></div></div>
-  <div class="ref-widget"><div class="ref-title">Рекомендуемый контент</div><div id="rightRecommended"></div></div>
-  <div class="ref-widget"><div class="ref-title">⌕ Найти пользователя</div><div class="ref-search"><input class="input" placeholder="Имя..." onkeydown="if(event.key==='Enter')location.href='search.html?q='+encodeURIComponent(this.value)"></div></div>
-  <div class="ref-widget"><div class="ref-title">▥ Статистика форума</div><div id="forumStats" class="forum-stats"></div></div>
+  <div class="ref-widget"><div class="ref-title" data-home-label="rightRecent">Последние сообщения</div><div id="rightRecent"></div></div>
+  <div data-home-media-anchor="sidebarAfterStats"></div>
+  <div class="ref-widget"><div class="ref-title" data-home-label="recommended">Рекомендуемый контент</div><div id="rightRecommended"></div></div>
+  <div class="ref-widget"><div class="ref-title" data-home-label="searchUser">⌕ Найти пользователя</div><div class="ref-search"><input class="input" placeholder="Имя..." onkeydown="if(event.key==='Enter')location.href='search.html?q='+encodeURIComponent(this.value)"></div></div>
+  <div class="ref-widget"><div class="ref-title" data-home-label="stats">▥ Статистика форума</div><div id="forumStats" class="forum-stats"></div></div>
 </aside>
-</div></div></main>
-<footer>Демонстрационный форум • синтетические данные • макет интерфейса</footer><script src="data.js"></script><script src="site.js"></script><script>renderHome();document.getElementById("categories").innerHTML=DEMO_DB.categories.map(c=>`<div class="category-row" onclick="location.href='category.html?id='+c.id"><div><h3>${esc(c.name)}</h3><p>${esc(c.description)}</p><span class="meta">Темы: ${fmt(c.topics)} · Сообщения: ${fmt(c.messages)}</span></div><div class="cat-last">Последнее сообщение<br><b>${esc(getUser(DEMO_DB.recent[0].author).name)}</b></div></div>`).join("");</script><script>
+</div>
+<div class="reference-bottom">
+  <div data-home-media-anchor="pageBottom"></div>
+  <div class="bottom-ads reference-bottom-grid">
+    <div data-home-media-anchor="bottom1" class="bad"></div>
+    <div data-home-media-anchor="bottom2" class="bad red"></div>
+    <div data-home-media-anchor="bottom3" class="bad green"></div>
+    <div data-home-media-anchor="bottom4" class="bad"></div>
+  </div>
+</div>
+</div></main>
+<footer>Демонстрационный форум • синтетические данные • макет интерфейса</footer>
+<script src="data.js"></script><script src="site.js"></script><script>
 (function(){
  const esc2=window.esc||function(x){return String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))};
+ const users=()=>DEMO_DB.users||[];
  function badge(t){ if(t.pinned)return '<span class="badge red">ВАЖНО</span>'; if(t.category==='Полезное')return '<span class="badge">ПОЛЕЗНОЕ</span>'; if(t.category==='Проверка')return '<span class="badge green">ПРОВЕРЕНО</span>'; if(t.category==='Продам')return '<span class="badge blue">ПРОДАМ</span>'; if(t.category==='Обмен')return '<span class="badge dark">ОБМЕН</span>'; return ''; }
- const rows=(DEMO_DB.threads||[]).slice().sort((a,b)=>Number(b.id)-Number(a.id)).map(t=>{const u=getUser(t.author)||{};return `<a class="ref-thread" href="thread.html?id=${t.id}"><span class="pin">${t.pinned?'⚑':'»'}</span><span class="rtitle">${badge(t)}${esc2(t.title)}</span><span class="reply-count">☏ ${fmt(t.answers||0)}</span><span class="last-date">${esc2(t.date||'Сегодня')}</span><span class="last-user">${esc2(u.name||'Демо')}</span></a>`}).join('');
- document.getElementById('referenceThreads').innerHTML=rows;
- const rec=(DEMO_DB.recent||[]).slice(0,7).map(x=>{const u=getUser(x.author)||{};return `<a class="ref-mini" href="thread.html?id=${((DEMO_DB.threads||[]).find(t=>t.title===x.title)||{}).id||1"><span class="mini-avatar">${esc2(u.avatar||'?')}</span><span><b>${esc2(x.title)}</b><small>${esc2(u.name||'Демо')} · ${esc2(x.date||'Сегодня')}</small></span></a>`}).join('');
- document.getElementById('rightRecent').innerHTML=rec;
- const hot=(DEMO_DB.hotTopics||[]).slice(0,3).map(x=>`<div class="ref-reco"><b><span class="reco-tag">${esc2(x.tag||'Новое')}</span>${esc2(x.title)}</b><small>Ответы: ${fmt(x.answers||0)}</small></div>`).join('');
- document.getElementById('rightRecommended').innerHTML=hot;
- if(typeof renderHome==='function')renderHome();
+ function topicByTitle(title){return (DEMO_DB.threads||[]).find(t=>t.title===title)||null}
+ function row(t){const u=getUser(t.author)||{};return `<a class="ref-thread" href="thread.html?id=${encodeURIComponent(t.id)}"><span class="pin">${t.pinned?'⚑':'»'}</span><span class="rtitle">${badge(t)}${esc2(t.title||'Без названия')}</span><span class="reply-count">☏ ${fmt(t.answers||0)}</span><span class="last-date">${esc2(t.date||'Сегодня')}</span><span class="last-user">${esc2(u.name||'Демо')}</span></a>`}
+ function renderFeed(mode){
+   const el=document.getElementById('referenceThreads');
+   if(!el)return;
+   let list=(DEMO_DB.threads||[]).slice();
+   const recentTitles=new Map((DEMO_DB.recent||[]).map((x,i)=>[x.title,i]));
+   if(mode==='messages')list.sort((a,b)=>{const ai=recentTitles.has(a.title)?recentTitles.get(a.title):9999;const bi=recentTitles.has(b.title)?recentTitles.get(b.title):9999;return ai-bi || Number(b.id)-Number(a.id)});
+   else list.sort((a,b)=>Number(b.id)-Number(a.id));
+   el.innerHTML=list.map(row).join('')||'<div class="notice">Нет демонстрационных тем.</div>';
+   document.querySelectorAll('.ref-tabs [data-feed]').forEach(x=>x.classList.toggle('active',x.dataset.feed===mode));
+   const title=document.getElementById('feedTitle');if(title)title.textContent=mode==='messages'?'Последние сообщения':'Новые темы';
+ }
+ document.querySelectorAll('.ref-tabs [data-feed]').forEach(x=>x.addEventListener('click',()=>renderFeed(x.dataset.feed)));
+ const rec=(DEMO_DB.recent||[]).slice(0,7).map(x=>{const u=getUser(x.author)||{};const t=topicByTitle(x.title);const href=t?'thread.html?id='+encodeURIComponent(t.id):'search.html?q='+encodeURIComponent(x.title);return `<a class="ref-mini" href="${href}"><span class="mini-avatar">${esc2(u.avatar||'?')}</span><span><b>${esc2(x.title||'Без названия')}</b><small>${esc2(u.name||'Демо')} · ${esc2(x.date||'Сегодня')}</small></span></a>`}).join('');
+ document.getElementById('rightRecent').innerHTML=rec||'<div class="modal-note">Нет записей.</div>';
+ const hot=(DEMO_DB.hotTopics||[]).slice(0,3).map(x=>`<div class="ref-reco"><b><span class="reco-tag">${esc2(x.tag||'Новое')}</span>${esc2(x.title||'Без названия')}</b><small>Ответы: ${fmt(x.answers||0)}</small></div>`).join('');
+ document.getElementById('rightRecommended').innerHTML=hot||'<div class="modal-note">Нет рекомендаций.</div>';
+ const stats=DEMO_DB.stats||{};
+ document.getElementById('forumStats').innerHTML=`<a href="search.html?type=threads"><b>${fmt(stats.topics)}</b><span>Темы</span></a><a href="search.html?type=messages"><b>${fmt(stats.messages)}</b><span>Сообщения</span></a><a href="search.html?type=users"><b>${fmt(stats.users)}</b><span>Пользователи</span></a><a href="search.html?type=reputation"><b>${fmt(stats.reputation)}</b><span>Репутация</span></a>`;
+ renderFeed('messages');
+ if(typeof authLinks==='function')authLinks();
 })();
 </script></body></html>

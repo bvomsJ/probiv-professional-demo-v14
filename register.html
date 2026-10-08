@@ -6,8 +6,8 @@
 function registerDemo(){
  const name=document.getElementById("name").value.trim(),pass=document.getElementById("pass").value.trim(),code=document.getElementById("code").value.trim(),msg=document.getElementById("msg");
  if(name.length<3||pass.length<3){msg.className="invite-message bad-msg";msg.textContent="Заполните имя и пароль.";return}
- if(!setMember(code)){msg.className="invite-message bad-msg";msg.textContent="Для регистрации нужен действующий код приглашения.";return}
  if(DEMO_DB.users.some(u=>u.name.toLowerCase()===name.toLowerCase())){msg.className="invite-message bad-msg";msg.textContent="Такое имя уже занято в демо-базе.";return}
+ if(!setMember(code)){msg.className="invite-message bad-msg";msg.textContent="Для регистрации нужен действующий код приглашения.";return}
  const id=Math.max.apply(null,DEMO_DB.users.map(u=>u.id))+1;
  DEMO_DB.users.push({id,name,role:"Участник",rating:0,posts:0,likes:0,dislikes:0,joined:"08.10.2026",avatar:name.slice(0,1).toUpperCase(),color:"#65745c",online:true,usdt:0,guarant:0,deposits:0,awards:["Новый участник"],bio:"Новый синтетический профиль демонстрационного форума.",status:"Участник"});
  saveDemoDB();localStorage.setItem("PROBIV_USER_ID",String(id));location.href=new URLSearchParams(location.search).get("return")||"index.html";

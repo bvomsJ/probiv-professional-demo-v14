@@ -10,14 +10,15 @@ window.getMedia=function(id){return (DEMO_DB.media||[]).find(m=>m.id===String(id
 window.renderMedia=function(ids,cls="media-stack"){
  const arr=(Array.isArray(ids)?ids:[]).map(getMedia).filter(m=>m&&m.enabled!==false);
  if(!arr.length)return "";
- return `<div class="${cls}">${arr.map(m=>{const tag=(m.type||"").startsWith("video/")?`<video src="${esc(m.src)}" controls loop></video>`:`<img src="${esc(m.src)}" alt="${esc(m.alt||m.name||"")}">`;return `<div class="media-item">${m.href?`<a href="${esc(m.href)}" target="_blank" rel="noopener">${tag}</a>`:tag}</div>`}).join("")}</div>`;
+ return `<div class="${cls}">${arr.map(m=>{const tag=(m.type||"").startsWith("video/")?`<video src="${esc(m.src)}" controls loop></video>`:`<img src="${esc(m.src)}" alt="${esc(m.alt||m.name||"")}">`;return `<div class="media-item">${safeHref(m.href)?`<a href="${esc(safeHref(m.href))}" target="_blank" rel="noopener">${tag}</a>`:tag}</div>`}).join("")}</div>`;
 };
 window.mediaSlot=function(slot,cls="media-slot"){const ids=(DEMO_DB.site&&DEMO_DB.site.mediaSlots&&DEMO_DB.site.mediaSlots[slot])||[];return renderMedia(ids,cls);};
-window.getUser=function(id){return (DEMO_DB.users||[]).find(u=>u.id===Number(id))||(DEMO_DB.users||[])[0]};
+window.getUser=function(id){return (DEMO_DB.users||[]).find(u=>u.id===Number(id))||null};
 window.getThread=function(id){return (DEMO_DB.threads||[]).find(t=>t.id===Number(id))};
 window.esc=function(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))};
 window.avatar=function(u,cls="avatar"){u=u||{};return `<div class="${cls}" style="background:${esc(u.color||"#65745c")}">${esc(u.avatar||"?")}</div>`};
 window.q=function(n){return new URLSearchParams(location.search).get(n)};
+window.safeHref=function(value){const raw=String(value??"").trim();if(!raw)return "";try{const u=new URL(raw,location.href);if(u.protocol==="http:"||u.protocol==="https:")return u.href;if(u.protocol==="mailto:"||u.protocol==="tel:")return raw;return u.origin===location.origin?u.href:""}catch{return ""}};
 window.fmt=function(n){return new Intl.NumberFormat("ru-RU").format(Number(n)||0)};
 window.saveDB=function(){localStorage.setItem("PROBIV_DEMO_DB",JSON.stringify(DEMO_DB));localStorage.setItem("PROBIV_DB_VERSION","v7")};
 window.saveDemoDB=window.saveDB;
@@ -35,7 +36,8 @@ window.isAdmin=function(){
  return ok;
 };
 window.requireAdmin=function(){if(!isAdmin()){localStorage.removeItem("PROBIV_ADMIN");localStorage.removeItem("PROBIV_ADMIN_SESSION");location.href="login.html?return="+encodeURIComponent(location.href);return false}return true};
-window.currentUser=function(){return getUser(Number(localStorage.getItem("PROBIV_USER_ID"))||1)};
+window.currentUser=function(){return getUser(Number(localStorage.getItem("PROBIV_USER_ID"))||0)};
+window.profileHref=function(id){const dest="profile.html?id="+encodeURIComponent(Number(id)||0);return (isMember()||isAdmin())?dest:"login.html?return="+encodeURIComponent(dest)};
 window.logout=function(){localStorage.removeItem("PROBIV_MEMBER");localStorage.removeItem("PROBIV_INVITE_CODE");localStorage.removeItem("PROBIV_USER_ID");localStorage.removeItem("PROBIV_ADMIN");localStorage.removeItem("PROBIV_ADMIN_SESSION");sessionStorage.removeItem("PROBIV_ADMIN");sessionStorage.removeItem("PROBIV_ADMIN_SESSION");location.href="index.html"};
 window.setMember=function(code){
  code=String(code||"").trim();
@@ -44,6 +46,8 @@ window.setMember=function(code){
  x.uses=(x.uses||0)+1;saveDB();
  localStorage.setItem("PROBIV_MEMBER","1");
  localStorage.setItem("PROBIV_INVITE_CODE",code);
+ const uid=Number(localStorage.getItem("PROBIV_USER_ID"));
+ if(!(uid>0 && (DEMO_DB.users||[]).some(u=>u.id===uid))){const first=(DEMO_DB.users||[])[0];if(first)localStorage.setItem("PROBIV_USER_ID",String(first.id));}
  return true;
 };
 window.authLinks=function(){
@@ -53,7 +57,7 @@ window.authLinks=function(){
     : `<a href="login.html?return=${encodeURIComponent(location.href)}">Вход</a> · <a href="register.html?return=${encodeURIComponent(location.href)}">Регистрация</a>`;
  });
 };
-window.canGuestRead=function(t){return (window.isPreviewMode&&window.isPreviewMode()) || !t || t.guestAccess!=="invite" || isMember()};
+window.canGuestRead=function(t){return (window.isPreviewMode&&window.isPreviewMode()&&isAdmin()) || !t || t.guestAccess!=="invite" || isMember()};
 window.gatePage=function(t){
  if(canGuestRead(t))return true;
  const host=document.getElementById("threadPage");if(!host)return false;
@@ -105,7 +109,7 @@ window.threadRow=function(t){
  return `<a class="thread-row" href="thread.html?id=${t.id}">
    ${avatar(u)}
    <div class="thread-main"><div class="thread-title">${t.pinned?'<span class="tag">ВАЖНО</span>':t.category==="Полезное"?'<span class="tag gold">Полезное</span>':""}${esc(t.title)}</div>
-   <div class="meta"><span onclick="event.preventDefault();event.stopPropagation();location.href='profile.html?id=${u.id}'">${esc(u.name)}</span> · ${esc(t.date)} · ${esc(t.category)}</div></div>
+   <div class="meta"><a href="${profileHref(u.id)}" onclick="event.stopPropagation()">${esc(u.name||"Неизвестный пользователь")}</a> · ${esc(t.date)} · ${esc(t.category)}</div></div>
    <div class="stats"><span>Ответы: ${fmt(t.answers)}</span><span>Просмотры: ${fmt(t.views)}</span></div>
    <div class="date">${esc(t.date)}</div><div class="mini">${esc(u.avatar||"?")}</div>
  </a>`;
@@ -121,7 +125,7 @@ window.renderVisualAds=function(){
    const frame=document.createElement('div');frame.className='visual-home-frame';frame.style.height=a.height>0?a.height+'px':'auto';
    const tag=(m.type||'').startsWith('video/')?document.createElement('video'):document.createElement('img');tag.src=m.src;tag.alt=m.alt||m.name||'';tag.style.width='100%';tag.style.height=a.height>0?'100%':'auto';tag.style.objectFit='contain';if(tag.tagName==='VIDEO'){tag.controls=true;tag.loop=true}
    frame.appendChild(tag);wrap.appendChild(frame);if(a.label){const cap=document.createElement('div');cap.className='visual-home-caption';cap.textContent=a.label;wrap.appendChild(cap)}
-   if(m.href){const link=document.createElement('a');link.href=m.href;link.target='_blank';link.rel='noopener';link.style.display='block';link.appendChild(wrap);anchor.appendChild(link)}else anchor.appendChild(wrap);
+   const href=safeHref(m.href);if(href){const link=document.createElement('a');link.href=href;link.target='_blank';link.rel='noopener';link.style.display='block';link.appendChild(wrap);anchor.appendChild(link)}else anchor.appendChild(wrap);
  });
  if(window.isPreviewMode&&window.isPreviewMode()) enableVisualBuilder();
 };
@@ -151,12 +155,12 @@ window.renderHome=function(){
    return `<a class="recent-row" href="${t?"thread.html?id="+t.id:"search.html?q="+encodeURIComponent(x.title)}"><span>${x.pinned?"📌":"»"}</span><div><b>${esc(x.title)}</b><small>${esc(getUser(x.author)?.name||"Демо")} · ${esc(x.date)}</small></div><em>💬 ${fmt(x.answers)}</em></a>`;
  }).join("");
  const users=document.getElementById("newUsers");
- if(users)users.innerHTML=(DEMO_DB.users||[]).slice().reverse().map(u=>`<a href="profile.html?id=${u.id}" class="user-line">${avatar(u,"tiny-avatar")}<span>${esc(u.name)}</span><i>${u.online?"●":"○"}</i></a>`).join("");
+ if(users)users.innerHTML=(DEMO_DB.users||[]).slice().reverse().map(u=>`<a href="${profileHref(u.id)}" class="user-line">${avatar(u,"tiny-avatar")}<span>${esc(u.name)}</span><i>${u.online?"●":"○"}</i></a>`).join("");
  const stat=document.getElementById("forumStats");
  if(stat)stat.innerHTML=`<a href="search.html?type=threads"><b>${fmt(DEMO_DB.stats.topics)}</b><span>Темы</span></a><a href="search.html?type=messages"><b>${fmt(DEMO_DB.stats.messages)}</b><span>Сообщения</span></a><a href="search.html?type=users"><b>${fmt(DEMO_DB.stats.users)}</b><span>Пользователи</span></a><a href="search.html?type=reputation"><b>${fmt(DEMO_DB.stats.reputation)}</b><span>Репутация</span></a>`;
  renderVisualAds();
  const cloud=document.getElementById("tagCloud");
- if(cloud)cloud.innerHTML=["форум","отзывы","обсуждения","гарант","профиль","проверка","демо","рейтинг","новости"].map(x=>`<a href="search.html?q=${encodeURIComponent(x)}">${x}</a>`).join(" ");
+ if(cloud)cloud.innerHTML=(DEMO_DB.tagCloud||["форум","отзывы","обсуждения","гарант","профиль","проверка","демо","рейтинг","новости"]).map(x=>`<a href="search.html?q=${encodeURIComponent(x)}">${x}</a>`).join(" ");
  authLinks();
  bindManagedLinks();
 };
@@ -201,6 +205,8 @@ window.applySiteConfig=function(){
  document.querySelectorAll(".tagline").forEach(x=>x.textContent=site.subtitle||"");
  document.querySelectorAll(".network-ad").forEach(x=>x.textContent=site.networkAd||site.topAd||"DEMO");
  document.querySelectorAll(".demo-strip").forEach(x=>x.textContent=site.demoLabel||"ДЕМО · СИНТЕТИЧЕСКИЕ ДАННЫЕ");
+ const labels=site.homeLabels||{};
+ document.querySelectorAll("[data-home-label]").forEach(x=>{const k=x.dataset.homeLabel;if(labels[k])x.textContent=labels[k]});
  document.querySelectorAll("footer").forEach(x=>x.textContent=site.footer||"ДЕМО-ФОРУМ");
  if(site.background){document.body.style.backgroundImage='linear-gradient(rgba(237,231,218,.10),rgba(237,231,218,.10)),url("'+String(site.background).replace(/"/g,'')+'")';}
  const ads=document.querySelectorAll(".ad");
@@ -217,7 +223,7 @@ window.applySiteConfig=function(){
 window.startSite=function(){
  applySiteConfig();authLinks();bindManagedLinks();auditAnchors();
  document.querySelectorAll('[data-link-key="admin"],a[href="admin.html"]').forEach(a=>{a.style.display=isAdmin()?"":"none"});
- document.querySelectorAll('[data-link-key="profile"]').forEach(a=>{a.href=isMember()?('profile.html?id='+currentUser().id):('login.html?return='+encodeURIComponent(location.href))});
+ document.querySelectorAll('[data-link-key="profile"]').forEach(a=>{a.href=isMember()&&currentUser()?profileHref(currentUser().id):('login.html?return='+encodeURIComponent(location.href))});
 };
 document.addEventListener("DOMContentLoaded",startSite);
 })();
