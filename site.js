@@ -445,8 +445,11 @@
     if (isPreviewMode()) enableVisualBuilder();
   };
 
-  window.enableVisualBuilder = function () {
-    if (window.__visualBuilderBound) return;
+    window.enableVisualBuilder = function () {
+    if (window.__visualBuilderBound) {
+      document.querySelectorAll(".visual-home-ad").forEach(bindVisualAd);
+      return;
+    }
     window.__visualBuilderBound = true;
 
     const style = document.createElement("style");
