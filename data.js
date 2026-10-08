@@ -269,10 +269,6 @@ invites:[{code:"DEMO-2026",label:"Демонстрационное пригла�
     u.awards = Array.isArray(u.awards) ? u.awards : [];
   });
 
-  if (!db.categories.some(function (c) { return db.threads.some(function (t) { return t.category === c.name; }); })) {
-    // Keep the seeded categories even when the stored database is empty or legacy.
-  }
-
   try {
     if (!preview) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
