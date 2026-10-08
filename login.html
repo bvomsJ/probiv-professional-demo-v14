@@ -1,26 +1,57 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Вход — PROBIV.CC</title><link rel="stylesheet" href="style.css"></head><body><div class="topline"></div>
-<header class="header"><div class="shell header-row"><div><a href="index.html" class="logo">PROBIV.CC</a><div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div></div><div class="network-ad">ДЕМО-ФОРУМ • ПРОФИЛИ • РЕЙТИНГИ</div></div><nav class="shell nav"><a data-link-key="forum" href="index.html"><strong>⌂</strong>Форум</a><a data-link-key="profile" href="profile.html?id=1"><strong>♙</strong>Профиль</a><a data-link-key="search" href="search.html"><strong>⌕</strong>Поиск</a><a data-link-key="rules" href="rules.html"><strong>▤</strong>Правила</a><a data-link-key="help" href="help.html"><strong>?</strong>Помощь</a><a data-link-key="admin" href="admin.html"><strong>⚙</strong>Админ</a></nav></header>
-<div class="crumb"><span><a href="index.html">PROBIV.CC</a> » Вход</span><span data-auth><a href="login.html">Вход</a> · <a href="register.html">Регистрация</a></span></div><div class="demo-strip shell">ДЕМО · СИНТЕТИЧЕСКИЙ ВХОД · НЕ РЕАЛЬНАЯ УЧЁТНАЯ ЗАПИСЬ</div>
-<main class="main"><div class="shell"><section class="content"><h1 class="page-title">Вход</h1><div class="page-panel" style="max-width:450px;padding:15px"><div class="form-row"><label>Логин</label><input id="login" class="input"></div><div class="form-row"><label>Пароль</label><input id="pass" class="input" type="password"></div><button class="gold-btn" onclick="demoLogin()">Войти</button><div class="modal-note">В демо-режиме проверяется только заполнение полей. Никаких реальных аккаунтов или паролей здесь нет.</div></div></section></div></main>
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Вход — PROBIV.CC</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<div class="topline"></div>
+<header class="header"><div class="shell header-row"><div><a href="index.html" class="logo">PROBIV.CC</a><div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div></div><div class="network-ad">ДЕМО-ФОРУМ • ПРОФИЛИ • РЕЙТИНГИ</div></div>
+<nav class="shell nav"><a data-link-key="forum" href="index.html"><strong>⌂</strong>Форум</a><a data-link-key="profile" href="profile.html?id=1"><strong>♙</strong>Профиль</a><a data-link-key="search" href="search.html"><strong>⌕</strong>Поиск</a><a data-link-key="rules" href="rules.html"><strong>▤</strong>Правила</a><a data-link-key="help" href="help.html"><strong>?</strong>Помощь</a><a data-link-key="admin" href="admin.html"><strong>⚙</strong>Админ</a></nav></header>
+<div class="crumb"><span><a href="index.html">PROBIV.CC</a> » Вход</span><span data-auth><a href="login.html">Вход</a> · <a href="register.html">Регистрация</a></span></div>
+<div class="demo-strip shell">ДЕМО · СИНТЕТИЧЕСКИЙ ВХОД · НЕ РЕАЛЬНАЯ УЧЁТНАЯ ЗАПИСЬ</div>
+<main class="main"><div class="shell"><section class="content"><h1 class="page-title">Вход</h1><div class="page-panel" style="max-width:450px;padding:15px">
+<div class="form-row"><label>Логин</label><input id="login" class="input" autocomplete="username"></div>
+<div class="form-row"><label>Пароль</label><input id="pass" class="input" type="password" autocomplete="current-password"></div>
+<button class="gold-btn" id="loginBtn">Войти</button>
+<div class="modal-note">В демо-режиме проверяется только имя пользователя. Администратор входит по демонстрационным реквизитам из README.md.</div>
+<div id="loginMsg" class="invite-message"></div>
+</div></section></div></main>
 <script src="data.js"></script><script src="site.js"></script><script>
-function demoLogin(){
- const a=document.getElementById("login").value.trim(),b=document.getElementById("pass").value.trim();
- if(!a||!b){alert("Заполните логин и пароль.");return}
- if(a===DEMO_DB.adminAuth.login && b===DEMO_DB.adminAuth.password){
-   localStorage.setItem("PROBIV_MEMBER","1");
-   localStorage.removeItem("PROBIV_ADMIN");
-   localStorage.removeItem("PROBIV_ADMIN_SESSION");
-   sessionStorage.setItem("PROBIV_ADMIN","1");
-   sessionStorage.setItem("PROBIV_ADMIN_SESSION","DEMO-ADMIN-AUTH");
-   localStorage.setItem("PROBIV_USER_ID","1");
-   const ret=new URLSearchParams(location.search).get("return");
-   location.href=ret||"admin.html";
-   return;
- }
- const u=DEMO_DB.users.find(x=>x.name.toLowerCase()===a.toLowerCase());
- if(!u){alert("В демо такого пользователя нет. Для админки используйте логин и пароль администратора из README.md.");return}
- localStorage.setItem("PROBIV_MEMBER","1");
- localStorage.removeItem("PROBIV_ADMIN");
- localStorage.setItem("PROBIV_USER_ID",String(u.id));
- const ret=new URLSearchParams(location.search).get("return");location.href=ret||"index.html";
-}</script><script>if(typeof authLinks==="function"){authLinks()}</script></body></html>
+(function(){
+  const msg=document.getElementById("loginMsg");
+  document.getElementById("loginBtn").addEventListener("click",function(){
+    const a=document.getElementById("login").value.trim();
+    const b=document.getElementById("pass").value.trim();
+
+    if(!a||!b){
+      msg.className="invite-message bad-msg";
+      msg.textContent="Заполните логин и пароль.";
+      return;
+    }
+
+    if(a===DEMO_DB.adminAuth.login && b===DEMO_DB.adminAuth.password){
+      localStorage.setItem("PROBIV_MEMBER","1");
+      localStorage.setItem("PROBIV_USER_ID","1");
+      sessionStorage.setItem("PROBIV_ADMIN","1");
+      sessionStorage.setItem("PROBIV_ADMIN_SESSION","DEMO-ADMIN-AUTH");
+      location.href=authReturn("admin.html");
+      return;
+    }
+
+    const u=(DEMO_DB.users||[]).find(function(x){return String(x.name).toLowerCase()===a.toLowerCase()});
+    if(!u){
+      msg.className="invite-message bad-msg";
+      msg.textContent="Такого демонстрационного пользователя нет.";
+      return;
+    }
+
+    localStorage.setItem("PROBIV_MEMBER","1");
+    localStorage.removeItem("PROBIV_INVITE_CODE");
+    localStorage.setItem("PROBIV_USER_ID",String(u.id));
+    location.href=authReturn("index.html");
+  });
+
+  authLinks();
+})();
+</script>
+</body>
+</html>

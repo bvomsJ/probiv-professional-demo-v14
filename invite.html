@@ -25,8 +25,8 @@ function activate(){
   if(setMember(code)){
     msg.className="invite-message ok";
     msg.textContent="Приглашение принято. Доступ участника активирован.";
-    const ret=new URLSearchParams(location.search).get("return");
-    setTimeout(()=>location.href=ret||"index.html",500);
+    const ret=authReturn("index.html");
+    setTimeout(()=>location.href=ret,500);
   }else{
     msg.className="invite-message bad-msg";
     msg.textContent="Код не найден, отключён или исчерпал лимит использований.";

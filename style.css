@@ -103,3 +103,22 @@ body:before{content:"ДЕМО • СИНТЕТИЧЕСКИЙ МАКЕТ • НЕ
 .reference-home+.demo-strip{display:none}
 @media(max-width:1050px){.reference-layout{grid-template-columns:190px minmax(0,1fr)}.ref-right{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.ref-right .ref-widget{margin-bottom:0}}
 @media(max-width:700px){.reference-layout{grid-template-columns:1fr}.ref-left{order:2}.ref-center{order:1}.ref-right{order:3;display:block}.ref-thread{grid-template-columns:15px 1fr 35px}.ref-thread .last-date,.ref-thread .last-user{display:none}.ref-toolbar{grid-template-columns:1fr auto}.ref-tabs{display:none}.ref-thread .rtitle{white-space:normal;line-height:1.2}.reference-home{padding-top:0}}
+
+/* v20 FINAL polish */
+.home-anchor:empty{height:0;min-height:0;margin:0;padding:0;border:0;background:transparent}
+.home-bottom-anchor{grid-column:1/-1}
+.reference-categories{margin-top:6px}
+.category-row{display:flex;text-decoration:none;color:inherit;gap:15px}
+.category-row>div:first-child{min-width:0}
+.cat-last{max-width:38%;font-size:9px;color:#938a7b;text-align:right;flex:0 0 38%}
+.cat-last b{color:#62594d;font-weight:normal}
+.cat-last span{font-size:8px}
+.pager-row{display:flex;gap:4px;flex-wrap:wrap}
+.active-page{background:#b58f50;color:#fff}
+.row-link{display:block;color:inherit;text-decoration:none}
+.admin-breadcrumb{font-size:10px;color:#8a806f;margin-bottom:8px}
+.visual-ad-head{display:flex;justify-content:space-between;gap:8px;align-items:center}
+@media(max-width:700px){.cat-last{display:none}.category-row{display:block}.reference-categories .forum-bar{font-size:10px}}
+.home-top-content{padding:0 0 5px}.home-top-content .ad-area{padding:0 0 4px}.home-top-content .ad{margin-bottom:3px;min-height:54px;height:54px;font-size:18px}.home-top-content .ad.a{height:60px}.home-top-content .ad.d{background:#5b4b30;color:#f5ead4}.tag-cloud{font-size:9px;line-height:1.9}.tag-cloud a{color:#776b57;text-decoration:none;margin-right:7px}.tag-cloud a:hover{text-decoration:underline}.ref-right .tag-cloud{padding:8px}
+@media(max-width:980px){.home-top-content .ad{font-size:14px}.reference-layout{grid-template-columns:190px minmax(0,1fr) 190px}.ref-thread{grid-template-columns:17px minmax(0,1fr) 40px 90px 70px}}
+@media(max-width:760px){.home-top-content .ad-area{padding:0 0 3px}.home-top-content .ad{font-size:12px;min-height:42px;height:42px}.home-top-content .ad.a{height:48px}.reference-layout{grid-template-columns:1fr}.ref-left,.ref-right{display:block}.ref-center{order:-1}.ref-right .ref-widget,.ref-left .ref-widget{margin-bottom:5px}}

@@ -1,26 +1,119 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Тема — PROBIV.CC</title><link rel="stylesheet" href="style.css"></head><body><div class="topline"></div>
-<header class="header"><div class="shell header-row"><div><a href="index.html" class="logo">PROBIV.CC</a><div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div></div><div class="network-ad">ДЕМО-ФОРУМ • ПРОФИЛИ • РЕЙТИНГИ</div></div><nav class="shell nav"><a data-link-key="forum" href="index.html"><strong>⌂</strong>Форум</a><a data-link-key="profile" href="profile.html?id=1"><strong>♙</strong>Профиль</a><a data-link-key="search" href="search.html"><strong>⌕</strong>Поиск</a><a data-link-key="rules" href="rules.html"><strong>▤</strong>Правила</a><a data-link-key="help" href="help.html"><strong>?</strong>Помощь</a><a data-link-key="admin" href="admin.html"><strong>⚙</strong>Админ</a></nav></header>
-<div class="crumb"><span><a href="index.html">PROBIV.CC</a> » <span id="crumbCurrent">Форум</span></span><span data-auth><a href="login.html">Вход</a> · <a href="register.html">Регистрация</a></span></div><div class="demo-strip shell">ДЕМО · СИНТЕТИЧЕСКАЯ ТЕМА · ВСЕ СООБЩЕНИЯ ВЫМЫШЛЕНЫ</div>
-<main class="main"><div class="shell"><section class="content"><div id="threadPage"></div></section></div></main><footer>ДЕМО-ФОРУМ • СИНТЕТИЧЕСКИЕ ДАННЫЕ • НЕ РЕАЛЬНЫЕ ОПЕРАЦИИ</footer>
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Тема — PROBIV.CC</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<div class="topline"></div>
+<header class="header"><div class="shell header-row"><div><a href="index.html" class="logo">PROBIV.CC</a><div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div></div><div class="network-ad">ДЕМО-ФОРУМ • ПРОФИЛИ • РЕЙТИНГИ</div></div>
+<nav class="shell nav"><a data-link-key="forum" href="index.html"><strong>⌂</strong>Форум</a><a data-link-key="profile" href="profile.html?id=1"><strong>♙</strong>Профиль</a><a data-link-key="search" href="search.html"><strong>⌕</strong>Поиск</a><a data-link-key="rules" href="rules.html"><strong>▤</strong>Правила</a><a data-link-key="help" href="help.html"><strong>?</strong>Помощь</a><a data-link-key="admin" href="admin.html"><strong>⚙</strong>Админ</a></nav></header>
+<div class="crumb"><span><a href="index.html">PROBIV.CC</a> » <span id="crumbCurrent">Форум</span></span><span data-auth><a href="login.html">Вход</a> · <a href="register.html">Регистрация</a></span></div>
+<div class="demo-strip shell">ДЕМО · СИНТЕТИЧЕСКАЯ ТЕМА · ВСЕ СООБЩЕНИЯ ВЫМЫШЛЕНЫ</div>
+<main class="main"><div class="shell"><section class="content"><div id="threadPage"></div></section></div></main>
+<footer>ДЕМО-ФОРУМ • СИНТЕТИЧЕСКИЕ ДАННЫЕ • НЕ РЕАЛЬНЫЕ ОПЕРАЦИИ</footer>
 <script src="data.js"></script><script src="site.js"></script><script>
-const requestedThread=getThread(q("id"));
-const t=requestedThread||null;
-if(!t){document.title="Тема не найдена — PROBIV.CC";document.getElementById("crumbCurrent").textContent="Тема не найдена";document.getElementById("threadPage").innerHTML=`<div class="page-panel access-gate"><h1>Тема не найдена</h1><p>Тема с указанным ID отсутствует в синтетической базе.</p><a class="small-btn" href="index.html">Вернуться на форум</a></div>`;authLinks();} else {document.title=t.title+" — PROBIV.CC";document.getElementById("crumbCurrent").textContent=t.title;
-if(gatePage(t)){
- t.views=(t.views||0)+1;saveDemoDB();
- function renderThread(){
-  const before=mediaSlot("threadBefore");
-  const after=mediaSlot("threadAfter");
-  const posts=t.posts.map((p,i)=>{const u=getUser(p.user)||{};const profile=u.id?`<a href="${profileHref(u.id)}">${esc(u.name||"Неизвестный пользователь")}</a>`:`<span>Неизвестный пользователь</span>`;return `<article class="post"><aside class="post-user">${avatar(u,"post-avatar")}${profile}<small>${esc(u.role||"Участник")}</small><small>Рейтинг: ${fmt(u.rating)}</small><small>Сообщений: ${fmt(u.posts)}</small><small>👍 ${fmt(u.likes)} &nbsp; 👎 ${fmt(u.dislikes)}</small></aside><div class="post-body"><div class="post-meta">${esc(p.date)} <span>#${i+1}</span></div><div class="post-text">${esc(p.text)}</div>${renderMedia(p.mediaIds,"post-media")}<div class="post-actions"><button class="small-btn" onclick="reactToPost(${t.id},${i},'like')">👍 ${p.likes||0}</button><button class="small-btn" onclick="reactToPost(${t.id},${i},'dislike')">👎 ${p.dislikes||0}</button>${u.id?`<a class="small-btn" href="${profileHref(u.id)}">Профиль</a>`:""}</div></div></article>`}).join("");
-  document.getElementById("threadPage").innerHTML=`<div class="page-panel"><div class="thread-head"><div class="chips">${esc(t.category)} · ${esc(t.date)}</div><h1>${esc(t.title)}</h1><div class="page-sub">Просмотров: ${fmt(t.views)} · Ответов: ${fmt(t.answers)} · Автор: ${getUser(t.author)?.id?`<a href="${profileHref(t.author)}">${esc(getUser(t.author).name)}</a>`:"Неизвестный пользователь"}</div></div>${before}${renderMedia(t.mediaIds,"thread-media")}${posts}${after}<div class="reply"><b>Ответить</b><textarea id="replyText" placeholder="Напишите демонстрационный ответ..."></textarea><button class="gold-btn" onclick="reply()">Отправить ответ</button></div></div>`;authLinks();
- }
- function reply(){
-  if(!isMember()){location.href="login.html?return="+encodeURIComponent(location.href);return}
-  const x=document.getElementById("replyText").value.trim();if(!x)return;
-  const uid=Number(localStorage.getItem("PROBIV_USER_ID"))||1,u=getUser(uid);
-  t.posts.push({user:uid,date:"08.10.2026",text:x,likes:0,dislikes:0});t.answers=(t.answers||0)+1;u.posts=(u.posts||0)+1;DEMO_DB.stats.messages=(DEMO_DB.stats.messages||0)+1;saveDemoDB();renderThread();
- }
- renderThread();
-}
-}
-</script></body></html>
+(function(){
+  const host=document.getElementById("threadPage");
+  const rawId=q("id");
+  const t=rawId===null ? null : getThread(Number(rawId));
+
+  if(!t){
+    host.innerHTML='<div class="page-panel access-gate"><div class="lock-icon">🧵</div><div class="demo-label">ТЕМА НЕ НАЙДЕНА</div><h1>Такой темы нет</h1><p>Указанная тема отсутствует в синтетической базе.</p><div class="gate-actions"><a class="small-btn" href="index.html">Вернуться на форум</a><a class="small-btn" href="search.html">Поиск</a></div></div>';
+    authLinks();
+    return;
+  }
+
+  document.title=t.title+" — PROBIV.CC";
+  document.getElementById("crumbCurrent").textContent=t.title;
+
+  if(!gatePage(t)){
+    authLinks();
+    return;
+  }
+
+  if(!window.isPreviewMode()){
+    t.views=(Number(t.views)||0)+1;
+    saveDB();
+  }
+
+  window.renderThread=function(){
+    const before=mediaSlot("threadBefore");
+    const after=mediaSlot("threadAfter");
+
+    const posts=(t.posts||[]).map(function(p,i){
+      const u=displayUser(p.user);
+      const canReact=isMember();
+
+      return `<article class="post">
+        <aside class="post-user">
+          ${avatar(u,"post-avatar")}
+          <a href="${profileHref(u.id)}">${esc(u.name)}</a>
+          <small>${esc(u.role)}</small>
+          <small>Рейтинг: ${fmt(u.rating)}</small>
+          <small>Сообщений: ${fmt(u.posts)}</small>
+          <small>👍 ${fmt(u.likes)} &nbsp; 👎 ${fmt(u.dislikes)}</small>
+        </aside>
+        <div class="post-body">
+          <div class="post-meta">${esc(p.date)} <span>#${i+1}</span></div>
+          <div class="post-text">${esc(p.text)}</div>
+          ${renderMedia(p.mediaIds,"post-media")}
+          <div class="post-actions">
+            <button class="small-btn" type="button" onclick="${canReact?`reactToPost(${t.id},${i},'like')`:`location.href='login.html?return='+encodeURIComponent(location.href)`}">👍 ${fmt(p.likes)}</button>
+            <button class="small-btn" type="button" onclick="${canReact?`reactToPost(${t.id},${i},'dislike')`:`location.href='login.html?return='+encodeURIComponent(location.href)`}">👎 ${fmt(p.dislikes)}</button>
+            <a class="small-btn" href="${profileHref(u.id)}">Профиль</a>
+          </div>
+        </div>
+      </article>`;
+    }).join("");
+
+    host.innerHTML=
+      `<div class="page-panel">`+
+        `<div class="thread-head"><div class="chips">${esc(t.category)} · ${esc(t.date)}</div><h1>${esc(t.title)}</h1><div class="page-sub">Просмотров: ${fmt(t.views)} · Ответов: ${fmt(t.answers)} · Автор: <a href="${profileHref(t.author)}">${esc(displayUser(t.author).name)}</a></div></div>`+
+        before+renderMedia(t.mediaIds,"thread-media")+posts+after+
+        `<div class="reply"><b>Ответить</b><textarea id="replyText" placeholder="Напишите демонстрационный ответ..."></textarea><button class="gold-btn" type="button" onclick="reply()">Отправить ответ</button><div class="meta" style="margin-top:5px">Ответить могут только участники демо.</div></div>`+
+      `</div>`;
+
+    authLinks();
+  };
+
+  window.reply=function(){
+    if(!isMember()){
+      location.href="login.html?return="+encodeURIComponent(location.href);
+      return;
+    }
+
+    const field=document.getElementById("replyText");
+    const x=(field?.value||"").trim();
+    if(!x){
+      alert("Введите сообщение.");
+      return;
+    }
+
+    const uid=Number(localStorage.getItem("PROBIV_USER_ID"));
+    const u=getUser(uid);
+    if(!u){
+      logout();
+      return;
+    }
+
+    t.posts=t.posts||[];
+    t.posts.push({
+      user:uid,
+      date:"09.10.2026",
+      text:x,
+      likes:0,
+      dislikes:0,
+      reactions:{},
+      mediaIds:[]
+    });
+    t.answers=t.posts.length-1;
+    u.posts=(Number(u.posts)||0)+1;
+    DEMO_DB.stats.messages=(Number(DEMO_DB.stats.messages)||0)+1;
+    saveDB();
+    renderThread();
+  };
+
+  renderThread();
+})();
+</script>
+</body>
+</html>
