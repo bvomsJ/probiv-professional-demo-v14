@@ -397,7 +397,13 @@ function saveVisualAd(id){
  persist();draw();refreshLivePreview(true);
 }
 function deleteAd(id){if(!confirm('Удалить баннер?'))return;DEMO_DB.ads=(DEMO_DB.ads||[]).filter(x=>Number(x.id)!==Number(id));persist();draw();refreshLivePreview(true)}
-function previewAd(id){const a=DEMO_DB.ads.find(x=>Number(x.id)===Number(id)),m=getMedia(a&&a.mediaId),host=document.getElementById('adPreview');if(!host)return;host.innerHTML='<h3>Предпросмотр</h3>'+(m?`<div class="live-ad-preview" style="width:${a.width||100}%;${a.maxWidth?`max-width:${a.maxWidth}px;`:''}"><img src="${escA(m.src)}" alt=""></div>`:'<div class="modal-note">Нет изображения</div>')}
+function previewAd(id){
+  const a=DEMO_DB.ads.find(x=>Number(x.id)===Number(id));
+  if(!a)return;
+  const m=getMedia(a.mediaId),host=document.getElementById('adPreview');
+  if(!host)return;
+  host.innerHTML='<h3>Предпросмотр</h3>'+(m?`<div class="live-ad-preview" style="width:${a.width||100}%;${a.maxWidth?`max-width:${a.maxWidth}px;`:''}"><img src="${escA(m.src)}" alt=""></div>`:'<div class="modal-note">Нет изображения</div>');
+}
 function saveAllVisualAds(){
  (DEMO_DB.ads||[]).forEach(a=>{const el=document.getElementById("adn"+a.id);if(!el)return; a.title=el.value.trim()||a.title;a.label=document.getElementById("adl"+a.id)?.value||a.label;a.mediaId=document.getElementById("adm"+a.id)?.value||a.mediaId;a.position=document.getElementById("adp"+a.id)?.value||a.position;a.slot=a.position;a.width=Math.max(1,Math.min(100,Number(document.getElementById("adw"+a.id)?.value)||100));a.height=Math.max(0,Number(document.getElementById("adh"+a.id)?.value)||0);a.maxWidth=Math.max(0,Number(document.getElementById("admax"+a.id)?.value)||0);a.align=document.getElementById("ada"+a.id)?.value||a.align;a.order=Number(document.getElementById("ado"+a.id)?.value)||0;a.enabled=document.getElementById("ade"+a.id)?.checked!==false;});persist();alert("Изменения баннеров сохранены");}
 function drawPreview(p){
