@@ -1,4 +1,23 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Админ-панель — PROBIV.CC</title><link rel="stylesheet" href="style.css"></head><body>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Админ-панель — PROBIV.CC</title><link rel="stylesheet" href="style.css"></head>
+
+<style>
+/* V18 friendly admin UI */
+.ux-admin-shell{grid-template-columns:255px minmax(420px,1fr) minmax(360px,1fr)!important;gap:12px!important}
+.ux-nav{max-height:calc(100vh - 20px);overflow:auto;padding-bottom:8px}
+.ux-nav-head{padding:14px 12px;background:#5b4e3e;color:#fff;position:sticky;top:0;z-index:2}
+.ux-nav-head b{display:block;font-size:12px;letter-spacing:.4px}.ux-nav-head small{display:block;margin-top:4px;opacity:.78;font-size:9px;line-height:1.4}
+.ux-nav-home{width:calc(100% - 10px)!important;margin:6px 5px!important;border:1px solid #b58f50!important;background:#f7f0e4!important;font-weight:bold!important;border-radius:4px}
+.ux-nav-group{border-top:1px solid #cfc5b4;padding:5px 0}.ux-nav-group-title{padding:7px 11px 4px;color:#8b7450;font-size:9px;font-weight:bold;letter-spacing:.5px}
+.ux-nav-item{display:flex!important;justify-content:space-between;align-items:center!important;gap:5px}.ux-nav-item span{font-size:8px;color:#9b9184}.ux-nav-item.active{font-weight:bold}
+.ux-top-note{font-size:11px;line-height:1.5}.ux-title-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.ux-title-row h2{margin-bottom:2px}.ux-muted{margin:0 0 10px;color:#8a8175;font-size:10px}.ux-search{max-width:280px}
+.ux-quick{display:flex;gap:5px;flex-wrap:wrap;padding:9px;background:#ebe4d8;border:1px solid #d2c7b7;margin-bottom:10px}
+.ux-map-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ux-map-card{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:8px;text-align:left;border:1px solid #d3c8b7;background:#f8f4eb;color:#5e5548;padding:10px;cursor:pointer;border-radius:4px}.ux-map-card:hover{background:#eee7da;border-color:#b58f50}.ux-map-icon{font-size:19px;text-align:center}.ux-map-card b{display:block;font-size:11px}.ux-map-card small{display:block;color:#9a9082;font-size:8px;margin:2px 0}.ux-map-card span{display:block;color:#71685c;font-size:9px;line-height:1.35}.ux-map-card strong{font-size:8px;color:#9b7a45;white-space:nowrap}
+.ux-help{background:#f8f2e7;border:1px solid #cdbd9f;border-left:4px solid #b58f50;padding:11px;margin-bottom:12px}.ux-help-title{font-weight:bold;font-size:14px;color:#5b4e3e;margin-bottom:7px}.ux-help-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10px;line-height:1.45}.ux-help-extra{margin-top:8px;padding-top:7px;border-top:1px solid #ddd1bf;font-size:9px;color:#756b5d}
+.ux-faq-list{display:grid;gap:6px}.ux-faq{background:#f8f4eb;border:1px solid #d5cbbd;padding:8px 10px}.ux-faq summary{cursor:pointer;font-weight:bold;font-size:11px;color:#5d5549}.ux-faq div{padding-top:8px;color:#766d61;font-size:10px;line-height:1.5}
+@media(max-width:1200px){.ux-admin-shell{grid-template-columns:230px minmax(360px,1fr)!important}.ux-admin-shell .admin-live{grid-column:2;position:static}.ux-admin-shell .ux-panel{grid-column:2}.ux-map-grid{grid-template-columns:1fr}}
+@media(max-width:800px){.ux-admin-shell{grid-template-columns:1fr!important}.ux-admin-shell .admin-live,.ux-admin-shell .ux-panel{grid-column:1}.ux-nav{max-height:none}.ux-help-grid{grid-template-columns:1fr}.ux-title-row{display:block}.ux-search{max-width:none;margin-bottom:8px}}
+</style>
+<body>
 <div class="topline"></div><header class="header"><div class="shell header-row"><div><a class="logo" href="index.html">PROBIV.CC</a><div class="tagline">ПАНЕЛЬ УПРАВЛЕНИЯ • ДЕМО-ПРОЕКТ</div></div><div class="network-ad">DEMO ADMIN</div></div>
 <nav class="shell nav"><a href="index.html"><strong>⌂</strong>Форум</a><a href="profile.html?id=1"><strong>♙</strong>Профиль</a><a href="search.html"><strong>⌕</strong>Поиск</a><a href="rules.html"><strong>▤</strong>Правила</a><a href="help.html"><strong>?</strong>Помощь</a><a href="admin.html"><strong>⚙</strong>Админ</a></nav></header>
 <div class="crumb"><span><a href="index.html">PROBIV.CC</a> » Админ-панель</span><span><a href="#" onclick="logout();return false">Выйти</a></span></div>
@@ -203,5 +222,140 @@ function drawTools(p){p.innerHTML='<h2>Инструменты</h2>'+card("Экс
 function exportDB(){let blob=new Blob([JSON.stringify(DEMO_DB,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="probiv-demo-data.json";a.click();URL.revokeObjectURL(a.href)}
 function importDB(){let f=document.getElementById("importFile").files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x.threads||!x.users)throw 0;localStorage.setItem("PROBIV_DEMO_DB",JSON.stringify(x));location.reload()}catch(e){alert("Неверный JSON")}};r.readAsText(f)}
 function resetDemo(){if(!confirm("Вернуть исходные данные?"))return;localStorage.removeItem("PROBIV_DEMO_DB");localStorage.removeItem("PROBIV_DB_VERSION");location.reload()}
-render();
+/* ===== V18 BEGIN: USER-FRIENDLY BLOCK CONTROL CENTER ===== */
+(function(){
+  const originalDraw = window.draw;
+  const originalDrawHome = window.drawHome;
+  const originalDrawMedia = window.drawMedia;
+  const originalDrawAds = window.drawAds;
+  const originalDrawSections = window.drawSections;
+  const originalDrawTopics = window.drawTopics;
+  const originalDrawPosts = window.drawPosts;
+  const originalDrawUsers = window.drawUsers;
+  const originalDrawAccess = window.drawAccess;
+  const originalDrawLinks = window.drawLinks;
+  const originalDrawPages = window.drawPages;
+  const originalDrawTools = window.drawTools;
+
+  activeTab = "map";
+  window.__adminDirty = false;
+
+  const blockInfo = {
+    homeHeader:{icon:"🧭",title:"Главная → Шапка",where:"Главная, самый верх",what:"Название PROBIV.CC, подзаголовок, верхняя плашка, DEMO-плашка."},
+    homeHero:{icon:"🖼️",title:"Главная → Верхние баннеры",where:"Главная, верхняя часть",what:"Текст трёх верхних баннеров. Изображения/GIF для них назначаются через Медиа → Размещение."},
+    homeStats:{icon:"📊",title:"Главная → Статистика",where:"Главная, блок статистики",what:"Числа: темы, сообщения, пользователи, репутация."},
+    homeHot:{icon:"🔥",title:"Главная → Горячие темы",where:"Главная, блок «Горячие темы»",what:"Название, метка, просмотры и ответы каждой горячей темы."},
+    homeRecent:{icon:"🕘",title:"Главная → Последние темы",where:"Главная, блок последних тем",what:"Какие темы показываются, автор, дата, количество ответов и закрепление."},
+    homeTags:{icon:"🏷️",title:"Главная → Облако тегов",where:"Главная, блок тегов",what:"Список тегов, разделённых запятыми."},
+    siteTopAd:{icon:"📣",title:"Все страницы → Верхний рекламный блок",where:"Верхняя часть страниц",what:"Текст верхнего рекламного блока."},
+    siteFooter:{icon:"🧾",title:"Все страницы → Подвал",where:"Самый низ каждой страницы",what:"Текст footer."},
+    siteBackground:{icon:"🎨",title:"Все страницы → Фон",where:"Фон сайта",what:"Путь к фоновой картинке."},
+    media:{icon:"🖼️",title:"Медиа → Картинки и GIF",where:"Медиатека сайта",what:"Загрузка, название, alt, ссылка, включение и назначение изображения."},
+    ads:{icon:"📐",title:"Главная → Рекламные блоки",where:"Разные места главной",what:"Позиция, размер, высота, выравнивание, порядок, изображение и подпись рекламного блока."},
+    sections:{icon:"📁",title:"Форум → Разделы",where:"Список разделов",what:"Название, описание и отображаемая статистика разделов."},
+    topics:{icon:"🧵",title:"Форум → Темы",where:"Темы внутри разделов",what:"Заголовок, раздел, автор, дата, просмотры, ответы, доступ, закрепление и сообщения темы."},
+    posts:{icon:"💬",title:"Форум → Сообщения",where:"Сообщения внутри тем",what:"Поиск и переход к редактированию сообщения через его тему."},
+    users:{icon:"👤",title:"Пользователи → Профили",where:"Профили пользователей",what:"Имя, роль, статус, аватар, рейтинг, статистика, био, награды и демо-финансовые поля."},
+    access:{icon:"🔐",title:"Доступ → Закрытые темы и приглашения",where:"Доступ к темам",what:"Можно ли читать тему гостю, а также коды приглашений."},
+    links:{icon:"🔗",title:"Навигация → Ссылки",where:"Кнопки и ссылки сайта",what:"Текст ссылки, куда ведёт и требуется ли вход."},
+    pages:{icon:"📄",title:"Страницы → Правила и Помощь",where:"rules.html и help.html",what:"Текст демонстрационных страниц правил и помощи."},
+    tools:{icon:"🧰",title:"Система → Резервная копия",where:"Данные DEMO_DB",what:"Экспорт, импорт и полный сброс локальной демо-базы."}
+  };
+
+  function setTab(tab){ activeTab=tab; window.__adminDirty=false; render(); window.scrollTo({top:0,behavior:"smooth"}); }
+  window.goBlock=setTab;
+
+  function info(key, extra=""){
+    const b=blockInfo[key]||{icon:"ℹ️",title:"Раздел",where:"—",what:"—"};
+    return `<div class="ux-help"><div class="ux-help-title">${b.icon} ${b.title}</div><div class="ux-help-grid"><div><b>Где на сайте:</b><br>${b.where}</div><div><b>Что именно меняется:</b><br>${b.what}</div></div>${extra?`<div class="ux-help-extra">${extra}</div>`:""}</div>`;
+  }
+  function group(title, items){return `<div class="ux-nav-group"><div class="ux-nav-group-title">${title}</div>${items.map(x=>`<button data-tab="${x[0]}" class="ux-nav-item">${x[1]} <span>${x[2]||""}</span></button>`).join("")}</div>`;}
+  function nav(){
+    return `<div class="admin-shell ux-admin-shell">
+      <aside class="admin-nav ux-nav">
+        <div class="ux-nav-head"><b>ЦЕНТР УПРАВЛЕНИЯ</b><small>Каждый блок подписан простыми словами</small></div>
+        <button data-tab="map" class="ux-nav-home">🗺️ Карта сайта</button>
+        ${group("🏠 ГЛАВНАЯ",[["homeHeader","Шапка","верх"],["homeHero","Верхние баннеры","верх"],["homeStats","Статистика","цифры"],["homeHot","Горячие темы","блок"],["homeRecent","Последние темы","блок"],["homeTags","Теги","блок"],["siteTopAd","Верхняя реклама","все страницы"],["siteFooter","Подвал","все страницы"],["siteBackground","Фон","все страницы"]])}
+        ${group("🖼️ МЕДИА И РЕКЛАМА",[["media","Медиатека","фото/GIF"],["ads","Рекламные блоки","размер/позиция"]])}
+        ${group("💬 ФОРУМ",[["sections","Разделы","категории"],["topics","Темы","топики"],["posts","Сообщения","посты"]])}
+        ${group("👥 ЛЮДИ И ДОСТУП",[["users","Пользователи","профили"],["access","Доступ","приглашения"]])}
+        ${group("🧩 НАСТРОЙКИ САЙТА",[["links","Ссылки","кнопки"],["pages","Правила и Помощь","текст"],["tools","Резервная копия","JSON"],["faq","FAQ","помощь"]])}
+      </aside>
+      <section class="admin-panel ux-panel" id="adminPanel"></section>
+      <aside class="admin-live"><div class="live-head"><b>👁 Живой просмотр</b><select id="previewTarget" class="input"><option value="index.html?preview=1">Главная</option><option value="category.html?id=1&preview=1">Раздел</option><option value="thread.html?id=101&preview=1">Тема</option><option value="profile.html?id=1&preview=1">Профиль</option></select></div><div class="live-note">Редактируй слева — здесь сразу видно, где изменение появится.</div><iframe id="liveFrame" title="Живой просмотр" src="${previewTarget}" loading="eager"></iframe></aside>
+    </div>`;
+  }
+
+  function render(){
+    rootEl.innerHTML='<h1 class="page-title">Админ-панель</h1><div class="modal-note ux-top-note"><b>Как пользоваться:</b> не ищи, где находится нужное поле. Выбирай блок по названию того места, которое хочешь изменить. В каждом разделе написано <b>где на сайте</b> и <b>что именно меняется</b>.</div>'+nav();
+    document.querySelectorAll("[data-tab]").forEach(b=>{b.classList.toggle("active",b.dataset.tab===activeTab);b.onclick=()=>setTab(b.dataset.tab)});
+    const sel=document.getElementById("previewTarget"); if(sel){sel.value=previewTarget;sel.onchange=()=>{previewTarget=sel.value;refreshLivePreview(true)}}
+    draw(); bindLiveInputs(); refreshLivePreview(true);
+  }
+
+  function mapCard(key){const b=blockInfo[key];return `<button type="button" class="ux-map-card" onclick="goBlock('${key}')"><div class="ux-map-icon">${b.icon}</div><div><b>${b.title}</b><small>${b.where}</small><span>${b.what}</span></div><strong>Изменить →</strong></button>`}
+  function drawMap(p){
+    const keys=["homeHeader","homeHero","homeStats","homeHot","homeRecent","homeTags","siteTopAd","siteFooter","siteBackground","media","ads","sections","topics","posts","users","access","links","pages","tools"];
+    p.innerHTML=`<div class="ux-title-row"><div><h2>🗺️ Карта сайта</h2><p class="ux-muted">Выбирай не технический файл, а конкретный визуальный блок сайта.</p></div><input id="blockSearch" class="input ux-search" placeholder="🔎 Например: баннер, подвал, пользователь, тема..."></div>
+      <div class="ux-quick"><button class="gold-btn" onclick="goBlock('homeHeader')">✏️ Что видно сверху</button><button class="small-btn" onclick="goBlock('media')">🖼️ Добавить картинку/GIF</button><button class="small-btn" onclick="goBlock('topics')">🧵 Изменить тему</button><button class="small-btn" onclick="goBlock('users')">👤 Изменить профиль</button><button class="small-btn" onclick="goBlock('faq')">❓ Я не понимаю, где это</button></div>
+      <div id="mapCards" class="ux-map-grid">${keys.map(mapCard).join("")}</div>`;
+    const s=document.getElementById("blockSearch"), cards=document.querySelectorAll(".ux-map-card");
+    s.oninput=()=>{const q=s.value.toLowerCase().trim();cards.forEach(c=>c.style.display=!q||c.textContent.toLowerCase().includes(q)?"flex":"none")};
+  }
+
+  function drawBlockSite(p,key){
+    if(key==="homeHeader") p.innerHTML=info(key,"Если хочешь изменить именно верхнюю часть сайта — это единственный экран, который тебе нужен.")+field("siteTitle","Название сайта",DEMO_DB.site.title)+field("siteSubtitle","Подзаголовок под названием",DEMO_DB.site.subtitle)+field("siteNetwork","Правая верхняя плашка",DEMO_DB.site.networkAd)+field("siteDemo","Полоса «ДЕМО»",DEMO_DB.site.demoLabel)+`<button class="gold-btn" onclick="saveSiteBlock('header')">💾 Сохранить шапку</button>`;
+    if(key==="homeHero") p.innerHTML=info(key,"Текст баннеров редактируется здесь. Саму картинку/GIF назначай в «Медиатека» и выбери нужное размещение.")+field("hBanner1","Верхний баннер №1",DEMO_DB.site.heroBanners?.[0])+field("hBanner2","Верхний баннер №2",DEMO_DB.site.heroBanners?.[1])+field("hBanner3","Верхний баннер №3",DEMO_DB.site.heroBanners?.[2]||"")+`<button class="gold-btn" onclick="saveHeroBlock()">💾 Сохранить баннеры</button>`;
+    if(key==="homeStats") p.innerHTML=info(key,"Это только отображаемые цифры демо-макета. Они не считаются автоматически из реальной БД в текущей локальной версии.")+field("hTopics","Темы",DEMO_DB.stats.topics,"number")+field("hMessages","Сообщения",DEMO_DB.stats.messages,"number")+field("hUsers","Пользователи",DEMO_DB.stats.users,"number")+field("hRep","Репутация",DEMO_DB.stats.reputation,"number")+`<button class="gold-btn" onclick="saveHomeStatsBlock()">💾 Сохранить статистику</button>`;
+    if(key==="homeHot") p.innerHTML=info(key,"Редактируй строки именно этого блока. Это не редактирует саму тему форума — только карточку в «Горячих темах».")+card("Горячие темы",(DEMO_DB.hotTopics||[]).map((x,i)=>field("hotT"+i,"Заголовок карточки #"+(i+1),x.title)+field("hotTag"+i,"Метка карточки #"+(i+1),x.tag)+field("hotViews"+i,"Просмотры",x.views,"number")+field("hotAns"+i,"Ответы",x.answers,"number")).join(""))+`<button class="gold-btn" onclick="saveHomeHotBlock()">💾 Сохранить горячие темы</button>`;
+    if(key==="homeRecent") p.innerHTML=info(key,"Это список, который выводится на главной. Изменения здесь не меняют саму тему, только её представление в этом блоке.")+card("Последние темы",(DEMO_DB.recent||[]).map((x,i)=>field("recTitle"+i,"Название #"+(i+1),x.title)+field("recAuthor"+i,"ID автора",x.author,"number")+field("recDate"+i,"Дата/подпись",x.date)+field("recAns"+i,"Ответы",x.answers,"number")+`<label><input type="checkbox" id="recPin${i}" ${x.pinned?"checked":""}> Закрепить</label>`).join(""))+`<button class="gold-btn" onclick="saveRecentBlock()">💾 Сохранить последние темы</button>`;
+    if(key==="homeTags") p.innerHTML=info(key,"Теги вводятся через запятую. Например: форум, отзывы, демо, рейтинг")+textarea("hTags","Теги через запятую",(DEMO_DB.tagCloud||[]).join(", "))+`<button class="gold-btn" onclick="saveTagsBlock()">💾 Сохранить теги</button>`;
+    if(key==="siteTopAd") p.innerHTML=info(key,"Если меняешь только текст верхнего рекламного блока — сюда. Картинка/GIF для него назначается отдельно через Медиатека → Верхний рекламный блок.")+field("siteTop","Текст верхней рекламы",DEMO_DB.site.topAd)+`<button class="gold-btn" onclick="saveSiteBlock('topAd')">💾 Сохранить верхнюю рекламу</button>`;
+    if(key==="siteFooter") p.innerHTML=info(key,"Меняет только текст в самом низу страниц.")+field("siteFooter","Текст подвала",DEMO_DB.site.footer)+`<button class="gold-btn" onclick="saveSiteBlock('footer')">💾 Сохранить подвал</button>`;
+    if(key==="siteBackground") p.innerHTML=info(key,"Укажи путь к файлу, например background.png. Для production позже лучше перейти на Storage/медиа.")+field("siteBg","Файл/URL фона",DEMO_DB.site.background||"background.png")+`<button class="gold-btn" onclick="saveSiteBlock('background')">💾 Сохранить фон</button>`;
+  }
+
+  function drawFaq(p){
+    const faqs=[
+      ["Как изменить логотип/название сверху?","Главная → Шапка. Поле «Название сайта»."],["Как изменить текст под логотипом?","Главная → Шапка → «Подзаголовок»."],["Как поменять картинку или GIF?","Медиа → Медиатека. Загрузить файл → выбрать размещение."],["Как поставить GIF именно сверху?","Медиа → Медиатека → Размещение → Верхний рекламный блок или нужный баннер."],["Как поменять размер рекламной картинки?","Медиа и реклама → Рекламные блоки. Там ширина, высота, выравнивание и порядок."],["Как изменить название темы?","Форум → Темы → найти тему → Редактировать."],["Как изменить текст сообщения?","Форум → Темы → открыть тему → изменить нужное сообщение."],["Как поменять профиль пользователя?","Пользователи → Профили → Редактировать."],["Как сделать тему закрытой?","Люди и доступ → Доступ → выбрать тему → вход/приглашение."],["Как изменить кнопку «Помощь» или «Правила»?","Настройки сайта → Ссылки."],["Как изменить страницу правил?","Настройки сайта → Правила и Помощь."],["Где резервная копия?","Настройки сайта → Резервная копия → Экспорт JSON."],["Я не знаю, где находится нужный элемент. Что делать?","Карта сайта → поле поиска. Введи обычными словами: баннер, подвал, тема, профиль, реклама, тег."],["Почему изменение не видно сразу?","Справа находится живой просмотр. Если это сохранённое изменение, нажми сохранить; затем предпросмотр обновится."]
+    ];
+    p.innerHTML=`<div class="ux-title-row"><div><h2>❓ FAQ — что где менять</h2><p class="ux-muted">Здесь не нужно знать названия файлов. Ищи по тому, что видишь на сайте.</p></div><input id="faqSearch" class="input ux-search" placeholder="🔎 Поиск по вопросу..."></div><div id="faqList" class="ux-faq-list">${faqs.map((f,i)=>`<details class="ux-faq"><summary>${f[0]}</summary><div>${f[1]} <button class="small-btn" onclick="goBlock('${i===0?'homeHeader':i===1?'homeHeader':i===2||i===3?'media':i===4?'ads':i===5||i===6?'topics':i===7?'users':i===8?'access':i===9?'links':i===10?'pages':i===11?'tools':'map'}')">Открыть редактор →</button></div></details>`).join("")}</div>`;
+    const s=document.getElementById("faqSearch"), items=document.querySelectorAll(".ux-faq"); s.oninput=()=>{const q=s.value.toLowerCase();items.forEach(x=>x.style.display=!q||x.textContent.toLowerCase().includes(q)?"block":"none")};
+  }
+
+  function draw(){
+    const p=panel();
+    if(activeTab==="map") return drawMap(p);
+    if(activeTab==="faq") return drawFaq(p);
+    if(blockInfo[activeTab] && ["homeHeader","homeHero","homeStats","homeHot","homeRecent","homeTags","siteTopAd","siteFooter","siteBackground"].includes(activeTab)) return drawBlockSite(p,activeTab);
+    if(activeTab==="media") return originalDrawMedia(p);
+    if(activeTab==="ads") return originalDrawAds(p);
+    if(activeTab==="sections") return originalDrawSections(p);
+    if(activeTab==="topics") return originalDrawTopics(p);
+    if(activeTab==="posts") return originalDrawPosts(p);
+    if(activeTab==="users") return originalDrawUsers(p);
+    if(activeTab==="access") return originalDrawAccess(p);
+    if(activeTab==="links") return originalDrawLinks(p);
+    if(activeTab==="pages") return originalDrawPages(p);
+    if(activeTab==="tools") return originalDrawTools(p);
+  }
+
+  window.saveSiteBlock=function(kind){
+    if(kind==='header'){DEMO_DB.site.title=document.getElementById('siteTitle').value;DEMO_DB.site.subtitle=document.getElementById('siteSubtitle').value;DEMO_DB.site.networkAd=document.getElementById('siteNetwork').value;DEMO_DB.site.demoLabel=document.getElementById('siteDemo').value;}
+    if(kind==='topAd') DEMO_DB.site.topAd=document.getElementById('siteTop').value;
+    if(kind==='footer') DEMO_DB.site.footer=document.getElementById('siteFooter').value;
+    if(kind==='background') DEMO_DB.site.background=document.getElementById('siteBg').value;
+    persist(); alert('Готово: блок сохранён.');
+  };
+  window.saveHeroBlock=function(){DEMO_DB.site.heroBanners=[document.getElementById('hBanner1').value,document.getElementById('hBanner2').value,document.getElementById('hBanner3').value];persist();alert('Баннеры сохранены.');};
+  window.saveHomeStatsBlock=function(){DEMO_DB.stats.topics=+document.getElementById('hTopics').value||0;DEMO_DB.stats.messages=+document.getElementById('hMessages').value||0;DEMO_DB.stats.users=+document.getElementById('hUsers').value||0;DEMO_DB.stats.reputation=+document.getElementById('hRep').value||0;persist();alert('Статистика сохранена.');};
+  window.saveHomeHotBlock=function(){(DEMO_DB.hotTopics||[]).forEach((x,i)=>{x.title=document.getElementById('hotT'+i).value;x.tag=document.getElementById('hotTag'+i).value;x.views=+document.getElementById('hotViews'+i).value||0;x.answers=+document.getElementById('hotAns'+i).value||0});persist();alert('Горячие темы сохранены.');};
+  window.saveRecentBlock=function(){DEMO_DB.recent=DEMO_DB.recent||[];DEMO_DB.recent.forEach((x,i)=>{x.title=document.getElementById('recTitle'+i).value;x.author=+document.getElementById('recAuthor'+i).value||x.author;x.date=document.getElementById('recDate'+i).value;x.answers=+document.getElementById('recAns'+i).value||0;x.pinned=document.getElementById('recPin'+i).checked});persist();alert('Последние темы сохранены.');};
+  window.saveTagsBlock=function(){DEMO_DB.tagCloud=(document.getElementById('hTags').value||'').split(',').map(x=>x.trim()).filter(Boolean);persist();alert('Теги сохранены.');};
+
+  // Keep the original preview helpers, but make preview updates safe for the new navigation.
+  window.render = render;
+  render();
+})();
+/* ===== V18 END ===== */
 </script></body></html>
