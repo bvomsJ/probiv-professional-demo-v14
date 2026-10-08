@@ -58,6 +58,12 @@ function syncDraft(){
  if(activeTab==="site"){
   d.site.networkAd=v("siteNetwork")??d.site.networkAd; d.site.title=v("siteTitle")??d.site.title; d.site.subtitle=v("siteSubtitle")??d.site.subtitle; d.site.topAd=v("siteTop")??d.site.topAd; d.site.footer=v("siteFooter")??d.site.footer; d.site.demoLabel=v("siteDemo")??d.site.demoLabel; d.site.background=v("siteBg")??d.site.background;
  }
+  if(activeTab==="homeAds"){
+  d.site.heroBanners=[v("ha1")||"",v("ha2")||"",v("ha3")||""];
+ }
+ if(activeTab==="homeStats"){
+  d.stats.topics=n("hsTopics"); d.stats.messages=n("hsMessages"); d.stats.users=n("hsUsers"); d.stats.reputation=n("hsRep");
+ }
  if(activeTab==="home"){
   d.stats.topics=n("hTopics"); d.stats.messages=n("hMessages"); d.stats.users=n("hUsers"); d.stats.reputation=n("hRep"); d.site.heroBanners=[v("hBanner1")||"",v("hBanner2")||"",v("hBanner3")||""]; d.tagCloud=(v("hTags")||"").split(",").map(x=>x.trim()).filter(Boolean); (d.hotTopics||[]).forEach((x,i)=>{x.title=v("hotT"+i)||x.title;x.tag=v("hotTag"+i)||x.tag;x.views=n("hotViews"+i);x.answers=n("hotAns"+i)});
  }
