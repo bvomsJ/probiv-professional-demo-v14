@@ -22,13 +22,13 @@
     return;
   }
 
-  document.title=t.title+" — PROBIV.CC";
-  document.getElementById("crumbCurrent").textContent=t.title;
-
-  if(!gatePage(t)){
+    if(!gatePage(t)){
     authLinks();
     return;
   }
+
+  document.title=t.title+" — PROBIV.CC";
+  document.getElementById("crumbCurrent").textContent=t.title;
 
   if(!window.isPreviewMode()){
     t.views=(Number(t.views)||0)+1;
