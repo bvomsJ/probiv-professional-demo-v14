@@ -331,7 +331,6 @@ function drawDashboard(p){
  <div class="stat"><b>${DEMO_DB.users.length}</b><span>Пользователи</span></div><div class="stat"><b>${closed}</b><span>Закрытые темы</span></div></div>
  ${card("Быстрые действия",`${btn("➕ Создать тему","newTopicForm()","gold-btn")} ${btn("➕ Создать пользователя","newUserForm()","gold-btn")} ${btn("➕ Создать раздел","newSectionForm()","gold-btn")} ${btn("🔗 Настроить ссылки","goTab('links')")} ${btn("♻ Сбросить демо-данные","resetDemo()","small-btn")}`)}
  ${card("Последние темы",DEMO_DB.threads.slice(0,8).map(t=>`<div class="list-row"><b>${escA(t.title)}</b><span class="meta"> #${t.id} · ${t.posts.length} сообщений · ${t.guestAccess==="invite"?"🔒":"🟢"}</span> ${btn("Ред.","editTopic("+t.id+")")}</div>`).join(""))}`}
-function goTab(x){activeTab=x;render()}
 function drawSite(p){
  p.innerHTML='<h2>Сайт</h2>'+field("siteNetwork","Верхняя плашка",DEMO_DB.site.networkAd||"")+field("siteTitle","Название",DEMO_DB.site.title)+field("siteSubtitle","Подзаголовок",DEMO_DB.site.subtitle)+field("siteTop","Верхний блок",DEMO_DB.site.topAd)+field("siteFooter","Footer",DEMO_DB.site.footer)+field("siteDemo","DEMO-плашка",DEMO_DB.site.demoLabel)+
  '<div class="form-row"><label>Цвет/фон</label><input id="siteBg" class="input" value="'+escA(DEMO_DB.site.background||"background.png")+'"></div><button class="gold-btn" onclick="saveSiteAll()">Сохранить</button>';
