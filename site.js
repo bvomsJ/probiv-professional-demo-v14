@@ -533,7 +533,14 @@
     });
   };
 
-  function recentEntryToThread(entry) {
+   function recentEntryToThread(entry) {
+    if (!entry) return null;
+    if (entry.threadId !== undefined && entry.threadId !== null && entry.threadId !== "") {
+      const byId = (DEMO_DB.threads || []).find(function (t) {
+        return Number(t.id) === Number(entry.threadId);
+      });
+      if (byId) return byId;
+    }
     return (DEMO_DB.threads || []).find(function (t) {
       return t.title === entry.title;
     });
