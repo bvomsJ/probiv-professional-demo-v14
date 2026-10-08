@@ -657,7 +657,7 @@
     const rowsEl = document.getElementById("referenceThreads");
     if (!rowsEl) return;
 
-    const label = (DEMO_DB.homeLabels || {});
+    const label = (DEMO_DB.site && DEMO_DB.site.homeLabels) || DEMO_DB.homeLabels || {};
     const centerTitle = document.getElementById("refCenterTitle");
     const newestLabel = document.getElementById("refTabRecent");
     const topicsLabel = document.getElementById("refTabTopics");
