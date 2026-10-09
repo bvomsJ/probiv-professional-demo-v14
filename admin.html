@@ -8,8 +8,10 @@
 <main class="main"><div class="shell"><div id="adminRoot" hidden></div></main><footer>SUPABASE ADMIN • RLS ЗАЩИЩАЕТ ЗАПИСЬ В БАЗУ</footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="data.js"></script><script src="site.js"></script><script src="supabase-adapter.js"></script><script>
 "use strict";
-if(!window.SupabaseAdapter || !window.SupabaseAdapter.enabled){document.getElementById("adminRoot").textContent="Supabase не настроен.";throw new Error("SUPABASE_REQUIRED")} window.SupabaseAdapter.requireAdmin();
-const rootEl=document.getElementById("adminRoot");
+if(!window.SupabaseAdapter || !window.SupabaseAdapter.enabled){document.getElementById("adminRoot").textContent="Supabase не настроен.";throw new Error("SUPABASE_REQUIRED")} const rootEl=document.getElementById("adminRoot");
+window.SupabaseAdapter.requireAdmin().then(function(ok){
+  if(ok){ rootEl.hidden=false; render(); }
+});
 let activeTab="dashboard";
 let previewTarget="index.html?preview=1";
 let previewTimer=null;
@@ -586,5 +588,4 @@ function importDB(){const f=document.getElementById("importFile").files[0];if(!f
  try{localStorage.setItem("PROBIV_DEMO_DB",JSON.stringify(x));localStorage.setItem("PROBIV_DB_VERSION",window.DEMO_DB_VERSION||"v9");sessionStorage.removeItem("PROBIV_PREVIEW_DB")}catch(e){return alert("Не удалось записать данные (localStorage переполнен?): "+e.message)}
  location.reload()};r.readAsText(f)}
 function resetDemo(){if(!confirm("Вернуть исходные данные? Все изменения в этом браузере будут удалены."))return;localStorage.removeItem("PROBIV_DEMO_DB");localStorage.removeItem("PROBIV_DB_VERSION");sessionStorage.removeItem("PROBIV_PREVIEW_DB");location.reload()}
-render();
 </script></body></html>
