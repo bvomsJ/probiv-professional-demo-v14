@@ -91,3 +91,9 @@
 ## Известные ограничения
 См. раздел «Ограничения» в README.md: админ-сессия и пароли — клиентские (подделываются в консоли), демо-счётчики не вычисляемые,
 данные только в браузере, удаление пользователя переназначает его контент первому другому пользователю (прежнее поведение сохранено).
+
+## Addendum: Supabase compatibility bridge (2026-10-09)
+
+The earlier audit above describes the original local-only archive. This updated package adds `supabase-config.js`, `supabase-adapter.js`, Supabase Auth login/signup hooks, a new `supabase/001_schema.sql`, and static migration assertions. The existing `DEMO_DB` UI model is bridged through `public.app_state`; invitation codes are kept in `public.invites` and signup validates them in a database trigger.
+
+**Verification boundary:** local JS/HTML/data checks passed (14/14); schema static assertions passed (10/10). The PostgreSQL migration has not been executed against the live Supabase project, and real Auth/RLS/database round-trip tests were not possible from this environment. The Playwright browser suite could not launch because the Playwright Chromium executable is not installed. The bridge does not migrate every legacy forum action to normalized server-side records; this remains a compatibility stage, not a production-ready forum backend.

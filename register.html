@@ -10,26 +10,28 @@
 <div class="demo-strip shell">ДЕМО · СИНТЕТИЧЕСКИЕ ДАННЫЕ · НЕ РЕАЛЬНАЯ РЕГИСТРАЦИЯ</div>
 <main class="main"><div class="shell"><section class="content"><div class="invite-card">
 <div class="lock-icon">👤</div><h1 class="page-title">Регистрация участника</h1>
-<p>Аккаунт создаётся локально в этом браузере (демо, не серверная регистрация). Для регистрации нужен действующий демонстрационный код приглашения.</p>
+<p>Аккаунт создаётся через Supabase Auth. Для регистрации нужен действующий код приглашения, который проверяется триггером в базе данных.</p>
+<div class="form-row"><label>Email</label><input id="email" class="input" type="email" autocomplete="email" placeholder="you@example.com"></div>
 <div class="form-row"><label>Имя пользователя</label><input id="name" class="input" placeholder="Например: DemoUser" autocomplete="username"></div>
 <div class="form-row"><label>Пароль</label><input id="pass" class="input" type="password" autocomplete="new-password"></div>
 <div class="form-row"><label>Код приглашения</label><input id="code" class="input" placeholder="DEMO-2026" autocomplete="off"></div>
-<button class="gold-btn" id="registerBtn">Создать демонстрационный аккаунт</button>
+<button class="gold-btn" id="registerBtn">Создать аккаунт</button>
 <div id="msg" class="invite-message"></div>
 </div></section></div></main>
-<script src="data.js"></script><script src="site.js"></script><script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="data.js"></script><script src="site.js"></script><script src="supabase-adapter.js"></script><script>
 (function(){
   const msg=document.getElementById("msg");
   const btn=document.getElementById("registerBtn");
   function fail(t){msg.className="invite-message bad-msg";msg.textContent=t;}
 
   async function register(){
+    const email=document.getElementById("email").value.trim();
     const name=document.getElementById("name").value.trim();
     const pass=document.getElementById("pass").value;
     const code=document.getElementById("code").value.trim();
 
-    if(name.length<3||name.length>24||pass.trim().length<3){
-      fail("Имя — от 3 до 24 символов, пароль — минимум 3 символа.");return;
+    if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || name.length<3||name.length>24||pass.length<8){
+      fail("Укажите корректный email, имя от 3 до 24 символов и пароль минимум из 8 символов.");return;
     }
     if(!/^[\p{L}\p{N}_.\- ]+$/u.test(name)){
       fail("Имя может содержать буквы, цифры, пробел, точку, дефис и подчёркивание.");return;
@@ -39,6 +41,16 @@
     }
     if(String(name).toLowerCase()===String(DEMO_DB.adminAuth.login).toLowerCase()){
       fail("Это имя зарезервировано.");return;
+    }
+    if(window.SupabaseAdapter && window.SupabaseAdapter.enabled){
+      btn.disabled=true;
+      try {
+        await window.SupabaseAdapter.signUp(email, pass, name, code);
+        msg.className="invite-message";
+        msg.textContent="Запрос регистрации отправлен. Если в Supabase включено подтверждение email, подтвердите адрес из письма, затем войдите.";
+        return;
+      } catch(e) { fail("Регистрация не выполнена: " + (e.message || String(e))); return; }
+      finally { btn.disabled=false; }
     }
     const invite=findInvite(code);
     if(!invite){

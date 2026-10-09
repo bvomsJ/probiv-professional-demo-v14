@@ -9,13 +9,13 @@
 <div class="crumb"><span><a href="index.html">PROBIV.CC</a> » Вход</span><span data-auth><a href="login.html">Вход</a> · <a href="register.html">Регистрация</a></span></div>
 <div class="demo-strip shell">ДЕМО · СИНТЕТИЧЕСКИЙ ВХОД · НЕ РЕАЛЬНАЯ УЧЁТНАЯ ЗАПИСЬ</div>
 <main class="main"><div class="shell"><section class="content"><h1 class="page-title">Вход</h1><div class="page-panel" style="max-width:450px;padding:15px">
-<div class="form-row"><label>Логин</label><input id="login" class="input" autocomplete="username"></div>
+<div class="form-row"><label>Email</label><input id="login" class="input" type="email" autocomplete="username"></div>
 <div class="form-row"><label>Пароль</label><input id="pass" class="input" type="password" autocomplete="current-password"></div>
 <button class="gold-btn" id="loginBtn">Войти</button>
-<div class="modal-note">Демо-режим: для заранее созданных синтетических пользователей достаточно любого непустого пароля; для аккаунтов, созданных через регистрацию, пароль проверяется (хеш хранится в браузере — это не серверная защита). Администратор входит по демонстрационным реквизитам из README.md.</div>
+<div class="modal-note">Вход через Supabase Auth. Для панели управления требуется подтверждённая роль администратора в базе данных.</div>
 <div id="loginMsg" class="invite-message"></div>
 </div></section></div></main>
-<script src="data.js"></script><script src="site.js"></script><script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="data.js"></script><script src="site.js"></script><script src="supabase-adapter.js"></script><script>
 (function(){
   const msg=document.getElementById("loginMsg");
   const btn=document.getElementById("loginBtn");
@@ -25,9 +25,16 @@
     const a=document.getElementById("login").value.trim();
     const b=document.getElementById("pass").value;
 
-    if(!a||!b.trim()){fail("Заполните логин и пароль.");return;}
+    if(!a||!b.trim()){fail("Заполните email и пароль.");return;}
     btn.disabled=true;
     try{
+      if(window.SupabaseAdapter && window.SupabaseAdapter.enabled){
+        const result = await window.SupabaseAdapter.signIn(a, b);
+        localStorage.setItem("PROBIV_MEMBER", "1");
+        if(result.user && result.user.id) localStorage.setItem("PROBIV_AUTH_UID", result.user.id);
+        if(result.role === "admin") { location.href=authReturn("admin.html"); return; }
+        location.href=authReturn("index.html"); return;
+      }
       if(a===DEMO_DB.adminAuth.login && b===DEMO_DB.adminAuth.password){
         // Demo admin session. The forum identity stays the current user, or demo user #1 if nobody is logged in.
         if(!currentUser()){

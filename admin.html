@@ -4,11 +4,11 @@
 <div class="topline"></div><header class="header"><div class="shell header-row"><div><a class="logo" href="index.html">PROBIV.CC</a><div class="tagline">ПАНЕЛЬ УПРАВЛЕНИЯ • ДЕМО-ПРОЕКТ</div></div><div class="network-ad">DEMO ADMIN</div></div>
 <nav class="shell nav"><a href="index.html"><strong>⌂</strong>Форум</a><a href="profile.html?id=1"><strong>♙</strong>Профиль</a><a href="search.html"><strong>⌕</strong>Поиск</a><a href="rules.html"><strong>▤</strong>Правила</a><a href="help.html"><strong>?</strong>Помощь</a><a href="admin.html"><strong>⚙</strong>Админ</a></nav></header>
 <div class="crumb"><span><a href="index.html">PROBIV.CC</a> » Админ-панель</span><span><a href="#" onclick="logout();return false">Выйти</a></span></div>
-<div class="demo-strip shell">ДЕМО · ПОЛНОЕ ЛОКАЛЬНОЕ УПРАВЛЕНИЕ · СИНТЕТИЧЕСКИЕ ДАННЫЕ</div>
-<main class="main"><div class="shell"><div id="adminRoot"></div></div></main><footer>ДЕМО-АДМИНИСТРАТОР • ИЗМЕНЕНИЯ СОХРАНЯЮТСЯ ЛОКАЛЬНО</footer>
-<script src="data.js"></script><script src="site.js"></script><script>
+<div class="demo-strip shell">SUPABASE AUTH · ИЗМЕНЕНИЯ ПУБЛИКУЮТСЯ АДМИНИСТРАТОРОМ</div>
+<main class="main"><div class="shell"><div id="adminRoot" hidden></div></main><footer>SUPABASE ADMIN • RLS ЗАЩИЩАЕТ ЗАПИСЬ В БАЗУ</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="data.js"></script><script src="site.js"></script><script src="supabase-adapter.js"></script><script>
 "use strict";
-if(typeof requireAdmin!=="function" || !requireAdmin()){throw new Error("ADMIN_AUTH_REQUIRED")}
+if(!window.SupabaseAdapter || !window.SupabaseAdapter.enabled){document.getElementById("adminRoot").textContent="Supabase не настроен.";throw new Error("SUPABASE_REQUIRED")} window.SupabaseAdapter.requireAdmin();
 const rootEl=document.getElementById("adminRoot");
 let activeTab="dashboard";
 let previewTarget="index.html?preview=1";

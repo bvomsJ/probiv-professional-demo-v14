@@ -71,3 +71,7 @@ python3 tests/run_browser_tests.py http://localhost:8765 --file-dir "$(pwd)" --o
 * Числовые «демо-счётчики» (статистика, число тем/сообщений раздела, «ответы» темы) — отображаемые значения, а не вычисляемые.
 * Данные хранятся отдельно в каждом браузере; нет синхронизации между вкладками/устройствами.
 * Удаление пользователя в админке (поведение сохранено) переназначает его темы/сообщения первому другому пользователю.
+
+
+## Supabase bridge (v10)
+See `docs/SUPABASE_MIGRATION.md` and apply `supabase/001_schema.sql` manually in Supabase SQL Editor. The frontend uses `supabase-config.js` (public key only) and `supabase-adapter.js`. This compatibility bridge is not a complete production migration of every legacy forum action; the SQL has not been applied to the live project from this environment.
