@@ -32,7 +32,7 @@ def node_check(code, label):
 
 pages = sorted(glob.glob(os.path.join(ROOT, "*.html")))
 # 1 JS files
-for js in ("site.js", "data.js"):
+for js in ("site.js", "data.js", "supabase-config.js", "supabase-adapter.js"):
     ok, err = node_check(open(os.path.join(ROOT, js), encoding="utf-8").read(), js); rec("JS syntax: " + js, ok, " ".join(err))
 # 2 inline scripts + 3 links + 4 duplicate ids + 5 id references
 all_ok = {"inline": [], "links": [], "dups": [], "refs": []}

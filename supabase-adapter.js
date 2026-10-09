@@ -38,7 +38,7 @@
     return data && data.role || null;
   }
   async function refreshState() {
-    if (!client) return { ok: false, reason: 'Supabase client is not configured.' };
+    if (!client) return { ok: false, reason: 'Сервис базы данных не настроен.' };
     const [{ data, error }, threadResult, indexResult] = await Promise.all([
       client.from('app_state').select('state').eq('id', 1).maybeSingle(),
       client.from('forum_threads').select('id,data,guest_access').order('id', { ascending: true }),
@@ -109,7 +109,7 @@
     try {
       const role = await getRole();
       verifiedAdmin = role === 'admin';
-      if (!verifiedAdmin) return { ok: false, reason: 'Only a Supabase admin can publish shared site changes.' };
+      if (!verifiedAdmin) return { ok: false, reason: 'Только администратор может сохранять изменения сайта.' };
       const state = publicState();
       const threads = (window.DEMO_DB && Array.isArray(window.DEMO_DB.threads)) ? window.DEMO_DB.threads : [];
       const saveResult = await client.rpc('admin_save_site_state', { p_state: state, p_threads: threads });
@@ -124,15 +124,15 @@
   }
 
   async function verifyTopic(id, expectedAccess, expectedTitle) {
-    if (!client) return { ok: false, reason: 'Supabase не настроен.' };
+    if (!client) return { ok: false, reason: 'Сервис базы данных не настроен.' };
     try {
       await requireVerifiedAdmin();
       const { data, error } = await client.from('forum_threads')
         .select('id,guest_access,data')
         .eq('id', Number(id))
         .maybeSingle();
-      if (error) return { ok: false, reason: 'Проверка темы в Supabase: ' + error.message };
-      if (!data) return { ok: false, reason: 'Supabase не вернул сохранённую тему. Проверьте таблицу forum_threads и RLS.' };
+      if (error) return { ok: false, reason: 'Проверка сохранения темы: ' + error.message };
+      if (!data) return { ok: false, reason: 'База данных не вернула сохранённую тему. Проверьте настройки доступа.' };
       const wanted = expectedAccess === 'invite' ? 'invite' : 'public';
       if (data.guest_access !== wanted) return { ok: false, reason: `Неверный доступ в базе: ожидался ${wanted}, записан ${data.guest_access}.` };
       if (expectedTitle && data.data && data.data.title !== expectedTitle) return { ok: false, reason: 'Заголовок в базе не совпадает с созданной темой.' };
@@ -142,12 +142,12 @@
   }
 
   async function requireVerifiedAdmin() {
-    if (!client) throw new Error('Supabase не настроен.');
+    if (!client) throw new Error('Сервис базы данных не настроен.');
     const role = await getRole();
     verifiedAdmin = role === 'admin';
-    if (!verifiedAdmin) throw new Error('Недостаточно прав: требуется роль admin в Supabase.');
+    if (!verifiedAdmin) throw new Error('Недостаточно прав: требуется роль администратора.');
     const { data: { user } = {}, error } = await client.auth.getUser();
-    if (error || !user) throw new Error(error?.message || 'Сессия Supabase не найдена.');
+    if (error || !user) throw new Error(error?.message || 'Сессия пользователя не найдена.');
     return user;
   }
   function mediaRowToUi(row) {
@@ -180,11 +180,11 @@
   }
   async function updateMediaRecord(item) {
     await requireVerifiedAdmin();
-    if (!item?.id || !item.storagePath) throw new Error('Это старый локальный файл. Загрузите его заново в Supabase Storage.');
+    if (!item?.id || !item.storagePath) throw new Error('Это старый локальный файл. Загрузите его заново через медиатеку.');
     const patch = { name: String(item.name || '').trim().slice(0, 160), alt: String(item.alt || '').slice(0, 500), href: String(item.href || '').slice(0, 2000), enabled: item.enabled !== false, updated_at: new Date().toISOString() };
     const { data, error } = await client.from('media').update(patch).eq('id', item.id).select('*').maybeSingle();
     if (error) throw new Error('Не удалось обновить media: ' + error.message);
-    if (!data) throw new Error('Запись media не найдена в Supabase. Перезагрузите файл через Storage.');
+    if (!data) throw new Error('Запись медиа не найдена. Загрузите файл заново через медиатеку.');
     return mediaRowToUi(data);
   }
   async function deleteMediaRecord(id) {
@@ -232,12 +232,18 @@
       for (const ch of authUser.id.replace(/-/g, '').slice(0, 8)) numericId = (numericId * 31 + ch.charCodeAt(0)) % 2000000000;
       numericId = Math.max(100000, numericId);
       while (window.DEMO_DB.users.some(u => Number(u.id) === numericId)) numericId = numericId >= 2000000000 ? 100000 : numericId + 1;
-      localUser = { id: numericId, name: profile.username || (authUser.email || 'Участник').split('@')[0], rating: 0, posts: 0, likes: 0, dislikes: 0, joined: new Date().toLocaleDateString('ru-RU'), avatar: String(profile.username || 'У').slice(0,1).toUpperCase(), color: '#65745c', online: true, usdt: 0, guarant: 0, deposits: 0, awards: [], bio: 'Профиль участника Supabase.', status: 'Участник' };
+      localUser = { id: numericId, name: profile.username || (authUser.email || 'Участник').split('@')[0], rating: 0, posts: 0, likes: 0, dislikes: 0, joined: new Date().toLocaleDateString('ru-RU'), avatar: String(profile.username || 'У').slice(0,1).toUpperCase(), color: '#65745c', online: true, usdt: 0, guarant: 0, deposits: 0, awards: [], bio: 'Профиль участника форума.', status: 'Участник' };
       window.DEMO_DB.users.push(localUser);
     }
     window.__remoteRole = profile.role || null;
     localUser.supabaseUid = authUser.id;
     localUser.role = profile.role === 'admin' ? 'Администратор' : 'Участник';
+    if (/supabase/i.test(String(localUser.bio || ''))) localUser.bio = 'Профиль участника форума.';
+    // Hide auto-generated technical usernames from the public profile UI.
+    if (/^test_[0-9a-f]{8}$/i.test(String(localUser.name || ''))) {
+      localUser.name = profile.role === 'admin' ? 'Администратор' : 'Участник';
+      localUser.avatar = localUser.name.slice(0, 1);
+    }
     localUser.status = profile.role === 'admin' ? 'Администратор' : (localUser.status || 'Участник');
     localStorage.setItem('PROBIV_USER_ID', String(localUser.id));
     localStorage.setItem('PROBIV_MEMBER', '1');
@@ -250,7 +256,7 @@
   }
 
   async function signIn(email, password) {
-    if (!client) throw new Error('Supabase не настроен. Проверьте supabase-config.js.');
+    if (!client) throw new Error('Сервис базы данных не настроен. Проверьте supabase-config.js.');
     const { data, error } = await client.auth.signInWithPassword({ email, password });
     if (error) throw error;
     const role = await getRole(); verifiedAdmin = role === 'admin';
@@ -258,7 +264,7 @@
     return { user: data.user, role };
   }
   async function signUp(email, password, username, inviteCode) {
-    if (!client) throw new Error('Supabase не настроен. Проверьте supabase-config.js.');
+    if (!client) throw new Error('Сервис базы данных не настроен. Проверьте supabase-config.js.');
     const { data, error } = await client.auth.signUp({
       email, password,
       options: { data: { username: username.trim(), invite_code: inviteCode.trim() } }
@@ -275,7 +281,7 @@
     if (!client) { location.href = 'login.html?return=admin.html'; return false; }
     try {
       const role = await getRole(); verifiedAdmin = role === 'admin';
-      if (!verifiedAdmin) { alert('Нужна учётная запись Supabase с ролью admin.'); location.href = 'login.html?return=admin.html'; }
+      if (!verifiedAdmin) { alert('Для этого действия нужна учётная запись администратора.'); location.href = 'login.html?return=admin.html'; }
       return verifiedAdmin;
     } catch (e) { alert('Не удалось проверить права администратора: ' + e.message); location.href = 'login.html'; return false; }
   }
@@ -319,13 +325,13 @@
         const localOk = originalSave.apply(this, arguments);
         saveQueue = saveQueue.catch(() => {}).then(() => persistState());
         window.__supabasePersistPromise = saveQueue.then(r => {
-          if (!r.ok && r.reason !== 'Only a Supabase admin can publish shared site changes.') console.warn('[Supabase] save failed:', r.reason);
-          if (!r.ok && window.isAdmin && window.isAdmin()) alert('Локально сохранено, но в Supabase не записано: ' + r.reason);
+          if (!r.ok && r.reason !== 'Только администратор может сохранять изменения сайта.') console.warn('[Supabase] save failed:', r.reason);
+          if (!r.ok && window.isAdmin && window.isAdmin()) alert('Изменение сохранено только в этом браузере, но не в базе: ' + r.reason);
           return r;
         });
         return localOk;
       };
       window.saveDemoDB = window.saveDB;
     }
-  } else { readyResolve({ ok: false, reason: 'Supabase client is not configured.' }); }
+  } else { readyResolve({ ok: false, reason: 'Сервис базы данных не настроен.' }); }
 })();
