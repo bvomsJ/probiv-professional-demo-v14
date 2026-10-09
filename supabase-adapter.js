@@ -42,9 +42,12 @@
     const merged = Object.assign({}, window.DEMO_DB || {}, data.state);
     delete merged.adminAuth;
     window.DEMO_DB = merged;
+    // Media metadata and public URLs are sourced from the dedicated media table.
+    const mediaResult = await refreshMediaMetadata();
+    if (!mediaResult.ok) console.warn('[Supabase] media metadata read failed:', mediaResult.reason);
     lastRemoteHash = hash(data.state);
     try {
-      localStorage.setItem('PROBIV_DEMO_DB', JSON.stringify(merged));
+      localStorage.setItem('PROBIV_DEMO_DB', JSON.stringify(window.DEMO_DB));
       localStorage.setItem('PROBIV_DB_VERSION', 'v10-supabase');
     } catch (_) {}
     try { await refreshAdminInvites(); } catch (e) { console.warn('[Supabase] invite load failed:', e.message); }
@@ -82,6 +85,79 @@
     } catch (e) { return { ok: false, reason: e.message || String(e) }; }
     finally { syncBusy = false; }
   }
+
+  async function requireVerifiedAdmin() {
+    if (!client) throw new Error('Supabase не настроен.');
+    const role = await getRole();
+    verifiedAdmin = role === 'admin';
+    if (!verifiedAdmin) throw new Error('Недостаточно прав: требуется роль admin в Supabase.');
+    const { data: { user } = {}, error } = await client.auth.getUser();
+    if (error || !user) throw new Error(error?.message || 'Сессия Supabase не найдена.');
+    return user;
+  }
+  function mediaRowToUi(row) {
+    return { id: row.id, name: row.name, alt: row.alt || '', href: row.href || '', type: row.content_type || '', src: row.public_url, storagePath: row.storage_path, enabled: row.enabled !== false };
+  }
+  async function uploadMediaFile(file, metadata = {}) {
+    const user = await requireVerifiedAdmin();
+    if (!(file instanceof File)) throw new Error('Файл не выбран.');
+    const allowed = ['image/jpeg','image/png','image/webp','image/gif','image/avif'];
+    if (!allowed.includes(file.type)) throw new Error('Поддерживаются JPG, PNG, WebP, GIF и AVIF.');
+    if (file.size > 10 * 1024 * 1024) throw new Error('Максимальный размер файла — 10 МБ.');
+    const cleanName = file.name.normalize('NFKD').replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/^-+|-+$/g, '').slice(-100) || 'image';
+    const id = 'm' + crypto.randomUUID().replace(/-/g, '').slice(0, 20);
+    const storagePath = `admin/${user.id}/${id}-${cleanName}`;
+    const { error: uploadError } = await client.storage.from('probiv-media').upload(storagePath, file, { contentType: file.type, upsert: false, cacheControl: '3600' });
+    if (uploadError) throw new Error('Storage upload: ' + uploadError.message);
+    const { data: urlData } = client.storage.from('probiv-media').getPublicUrl(storagePath);
+    const row = {
+      id, name: String(metadata.name || file.name).trim().slice(0, 160) || file.name,
+      alt: String(metadata.alt || '').slice(0, 500), href: String(metadata.href || '').slice(0, 2000),
+      content_type: file.type, storage_path: storagePath, public_url: urlData.publicUrl,
+      enabled: true, created_by: user.id, updated_at: new Date().toISOString()
+    };
+    const { data, error: insertError } = await client.from('media').insert(row).select('*').single();
+    if (insertError) {
+      await client.storage.from('probiv-media').remove([storagePath]).catch(() => {});
+      throw new Error('Не удалось сохранить метаданные media: ' + insertError.message);
+    }
+    return mediaRowToUi(data);
+  }
+  async function updateMediaRecord(item) {
+    await requireVerifiedAdmin();
+    if (!item?.id || !item.storagePath) throw new Error('Это старый локальный файл. Загрузите его заново в Supabase Storage.');
+    const patch = { name: String(item.name || '').trim().slice(0, 160), alt: String(item.alt || '').slice(0, 500), href: String(item.href || '').slice(0, 2000), enabled: item.enabled !== false, updated_at: new Date().toISOString() };
+    const { data, error } = await client.from('media').update(patch).eq('id', item.id).select('*').maybeSingle();
+    if (error) throw new Error('Не удалось обновить media: ' + error.message);
+    if (!data) throw new Error('Запись media не найдена в Supabase. Перезагрузите файл через Storage.');
+    return mediaRowToUi(data);
+  }
+  async function deleteMediaRecord(id) {
+    await requireVerifiedAdmin();
+    const { data: row, error: readError } = await client.from('media').select('id,storage_path').eq('id', id).maybeSingle();
+    if (readError) throw new Error('Не удалось найти медиа: ' + readError.message);
+    if (!row) return { ok: true, missing: true };
+    const { error: deleteError } = await client.from('media').delete().eq('id', id);
+    if (deleteError) throw new Error('Не удалось удалить метаданные: ' + deleteError.message);
+    if (row.storage_path) {
+      const { error: storageError } = await client.storage.from('probiv-media').remove([row.storage_path]);
+      if (storageError) console.warn('[Supabase] metadata deleted, but Storage file could not be removed:', storageError.message);
+    }
+    return { ok: true };
+  }
+  async function refreshMediaMetadata() {
+    if (!client) return { ok: false };
+    let query = client.from('media').select('*').order('created_at', { ascending: false });
+    let role = null;
+    try { role = await getRole(); } catch (_) {}
+    if (role !== 'admin') query = query.eq('enabled', true);
+    const { data, error } = await query;
+    if (error) return { ok: false, reason: error.message };
+    window.DEMO_DB = window.DEMO_DB || {};
+    window.DEMO_DB.media = (data || []).map(mediaRowToUi);
+    return { ok: true, count: window.DEMO_DB.media.length };
+  }
+
   // Keep the legacy forum UI linked to the authenticated Supabase profile.
   // This is a display/compatibility mapping only; permissions are always checked via profiles.role.
   async function syncLocalProfile(authUser) {
@@ -147,7 +223,7 @@
       return verifiedAdmin;
     } catch (e) { alert('Не удалось проверить права администратора: ' + e.message); location.href = 'login.html'; return false; }
   }
-  window.SupabaseAdapter = { enabled, client, signIn, signUp, signOut, getRole, refreshState, persistState, requireAdmin,
+  window.SupabaseAdapter = { enabled, client, signIn, signUp, signOut, getRole, refreshState, persistState, requireAdmin, uploadMediaFile, updateMediaRecord, deleteMediaRecord, refreshMediaMetadata,
     isAdmin: () => verifiedAdmin };
   window.isAdmin = () => verifiedAdmin;
   const originalLogout = window.logout;
@@ -182,9 +258,10 @@
     if (typeof originalSave === 'function') {
       window.saveDB = function () {
         const localOk = originalSave.apply(this, arguments);
-        persistState().then(r => {
+        window.__supabasePersistPromise = persistState().then(r => {
           if (!r.ok && r.reason !== 'Only a Supabase admin can publish shared site changes.') console.warn('[Supabase] save failed:', r.reason);
           if (!r.ok && window.isAdmin && window.isAdmin()) alert('Локально сохранено, но в Supabase не записано: ' + r.reason);
+          return r;
         });
         return localOk;
       };
