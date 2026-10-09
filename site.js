@@ -402,7 +402,7 @@
     if (t.guestAccess !== "invite") return true;
     // When Supabase is active, stale localStorage and ?preview=1 are never access credentials.
     if (window.SupabaseAdapter && window.SupabaseAdapter.enabled) {
-      return !!window.__remoteStateLoaded && ["admin", "moderator", "member"].includes(window.__remoteRole);
+      return !!window.__remoteStateLoaded && window.__remoteAuthenticated === true;
     }
     return isPreviewMode() || isMember();
   };

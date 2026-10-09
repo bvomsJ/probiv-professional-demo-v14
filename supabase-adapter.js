@@ -15,6 +15,7 @@
   window.SupabaseReady = new Promise(resolve => { readyResolve = resolve; });
   window.__remoteStateLoaded = false;
   window.__remoteRole = null;
+  window.__remoteAuthenticated = false;
 
   function publicState() {
     const state = JSON.parse(JSON.stringify(window.DEMO_DB || {}));
@@ -45,9 +46,17 @@
     if (error) return { ok: false, reason: error.message };
     if (threadResult.error) return { ok: false, reason: 'Загрузка тем: ' + threadResult.error.message };
     const remoteState = data && data.state ? data.state : {};
-    try { window.__remoteRole = await getRole(); } catch (_) { window.__remoteRole = null; }
+    try {
+      window.__remoteRole = await getRole();
+      const authResult = await client.auth.getUser();
+      window.__remoteAuthenticated = !!(authResult && authResult.data && authResult.data.user);
+    } catch (_) { window.__remoteRole = null; window.__remoteAuthenticated = false; }
     // Never fall back to bundled/local topic bodies: only rows allowed by server-side RLS are used.
-    const remoteThreads = (threadResult.data || []).map(row => row.data).filter(Boolean);
+    const remoteThreads = (threadResult.data || []).map(row => {
+      if (!row || !row.data) return null;
+      // The protected SQL column is the source of truth for access; never trust a stale JSON flag.
+      return Object.assign({}, row.data, { guestAccess: row.guest_access === 'invite' ? 'invite' : 'public' });
+    }).filter(Boolean);
     const merged = Object.assign({}, window.DEMO_DB || {}, remoteState);
     merged.threads = remoteThreads;
     delete merged.adminAuth;
@@ -92,6 +101,24 @@
       return { ok: true };
     } catch (e) { return { ok: false, reason: e.message || String(e) }; }
     finally { syncBusy = false; }
+  }
+
+  async function verifyTopic(id, expectedAccess, expectedTitle) {
+    if (!client) return { ok: false, reason: 'Supabase не настроен.' };
+    try {
+      await requireVerifiedAdmin();
+      const { data, error } = await client.from('forum_threads')
+        .select('id,guest_access,data')
+        .eq('id', Number(id))
+        .maybeSingle();
+      if (error) return { ok: false, reason: 'Проверка темы в Supabase: ' + error.message };
+      if (!data) return { ok: false, reason: 'Supabase не вернул сохранённую тему. Проверьте таблицу forum_threads и RLS.' };
+      const wanted = expectedAccess === 'invite' ? 'invite' : 'public';
+      if (data.guest_access !== wanted) return { ok: false, reason: `Неверный доступ в базе: ожидался ${wanted}, записан ${data.guest_access}.` };
+      if (expectedTitle && data.data && data.data.title !== expectedTitle) return { ok: false, reason: 'Заголовок в базе не совпадает с созданной темой.' };
+      if (!data.data || (data.data.guestAccess === 'invite') !== (wanted === 'invite')) return { ok: false, reason: 'Поле guestAccess в данных темы не совпадает с guest_access.' };
+      return { ok: true, topic: data.data, guest_access: data.guest_access };
+    } catch (e) { return { ok: false, reason: e.message || String(e) }; }
   }
 
   async function requireVerifiedAdmin() {
@@ -232,7 +259,7 @@
       return verifiedAdmin;
     } catch (e) { alert('Не удалось проверить права администратора: ' + e.message); location.href = 'login.html'; return false; }
   }
-  window.SupabaseAdapter = { enabled, client, signIn, signUp, signOut, getRole, refreshState, persistState, requireAdmin, uploadMediaFile, updateMediaRecord, deleteMediaRecord, refreshMediaMetadata,
+  window.SupabaseAdapter = { enabled, client, signIn, signUp, signOut, getRole, refreshState, persistState, verifyTopic, requireAdmin, uploadMediaFile, updateMediaRecord, deleteMediaRecord, refreshMediaMetadata,
     isAdmin: () => verifiedAdmin };
   window.isAdmin = () => verifiedAdmin;
   const originalLogout = window.logout;
@@ -246,6 +273,7 @@
     client.auth.onAuthStateChange((event, session) => {
       if (!session) {
         window.__remoteRole = null;
+        window.__remoteAuthenticated = false;
         verifiedAdmin = false;
         ['PROBIV_MEMBER','PROBIV_USER_ID','PROBIV_AUTH_UID'].forEach(k => localStorage.removeItem(k));
         return;
