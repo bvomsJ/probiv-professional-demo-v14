@@ -39,23 +39,43 @@
   }
   async function refreshState() {
     if (!client) return { ok: false, reason: 'Supabase client is not configured.' };
-    const [{ data, error }, threadResult] = await Promise.all([
+    const [{ data, error }, threadResult, indexResult] = await Promise.all([
       client.from('app_state').select('state').eq('id', 1).maybeSingle(),
-      client.from('forum_threads').select('data').order('id', { ascending: true })
+      client.from('forum_threads').select('id,data,guest_access').order('id', { ascending: true }),
+      client.from('forum_topic_index').select('id,title,category,author,topic_date,views,answers,pinned,guest_access').order('id', { ascending: true })
     ]);
     if (error) return { ok: false, reason: error.message };
-    if (threadResult.error) return { ok: false, reason: 'Загрузка тем: ' + threadResult.error.message };
+    if (threadResult.error) return { ok: false, reason: 'Загрузка содержимого тем: ' + threadResult.error.message };
+    if (indexResult.error) return { ok: false, reason: 'Загрузка списка тем: ' + indexResult.error.message + '. Примените миграцию 006_topic_listing_index.sql.' };
     const remoteState = data && data.state ? data.state : {};
     try {
       window.__remoteRole = await getRole();
       const authResult = await client.auth.getUser();
       window.__remoteAuthenticated = !!(authResult && authResult.data && authResult.data.user);
     } catch (_) { window.__remoteRole = null; window.__remoteAuthenticated = false; }
-    // Never fall back to bundled/local topic bodies: only rows allowed by server-side RLS are used.
-    const remoteThreads = (threadResult.data || []).map(row => {
-      if (!row || !row.data) return null;
-      // The protected SQL column is the source of truth for access; never trust a stale JSON flag.
-      return Object.assign({}, row.data, { guestAccess: row.guest_access === 'invite' ? 'invite' : 'public' });
+    // Topic titles/metadata are public in forum_topic_index; bodies remain protected by RLS in forum_threads.
+    // For a closed topic that a guest cannot read, return a metadata-only placeholder, never its posts/body.
+    const bodyById = new Map((threadResult.data || []).filter(row => row && row.data).map(row => [String(row.id), row]));
+    const remoteThreads = (indexResult.data || []).map(meta => {
+      if (!meta) return null;
+      const body = bodyById.get(String(meta.id));
+      const base = body && body.data ? body.data : {
+        id: meta.id, title: meta.title, category: meta.category, author: meta.author,
+        date: meta.topic_date, views: meta.views, answers: meta.answers, pinned: meta.pinned,
+        posts: [], mediaIds: [], _metadataOnly: true
+      };
+      return Object.assign({}, base, {
+        id: meta.id,
+        title: meta.title,
+        category: meta.category,
+        author: meta.author,
+        date: meta.topic_date,
+        views: Number(meta.views) || 0,
+        answers: Number(meta.answers) || 0,
+        pinned: !!meta.pinned,
+        guestAccess: meta.guest_access === 'invite' ? 'invite' : 'public',
+        _metadataOnly: !body
+      });
     }).filter(Boolean);
     const merged = Object.assign({}, window.DEMO_DB || {}, remoteState);
     merged.threads = remoteThreads;

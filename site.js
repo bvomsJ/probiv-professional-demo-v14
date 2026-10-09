@@ -399,6 +399,8 @@
 
   window.canGuestRead = function (t) {
     if (!t) return false;
+    // Metadata-only closed topics remain visible in lists; their bodies are never loaded for guests.
+    if (t._metadataOnly) return true;
     if (t.guestAccess !== "invite") return true;
     // When Supabase is active, stale localStorage and ?preview=1 are never access credentials.
     if (window.SupabaseAdapter && window.SupabaseAdapter.enabled) {
@@ -409,9 +411,16 @@
 
   window.gatePage = function (t) {
     if (!t) return false;
-    if (canGuestRead(t)) return true;
-
     const host = document.getElementById("threadPage");
+    if (t._metadataOnly) {
+      if (window.SupabaseAdapter && window.SupabaseAdapter.enabled && !window.__remoteAuthenticated) {
+        location.replace("login.html?return=" + encodeURIComponent(location.href));
+        return false;
+      }
+      if (host) host.innerHTML = '<div class="page-panel access-gate"><div class="lock-icon">🔒</div><h1>Содержимое темы недоступно</h1><p>Войдите в аккаунт с правами доступа и обновите страницу.</p><a class="gold-btn" href="login.html?return='+encodeURIComponent(location.href)+'">Войти</a></div>';
+      return false;
+    }
+    if (canGuestRead(t)) return true;
     if (!host) return false;
 
     host.innerHTML =
