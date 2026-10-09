@@ -82,32 +82,47 @@
     } catch (e) { return { ok: false, reason: e.message || String(e) }; }
     finally { syncBusy = false; }
   }
+  // Keep the legacy forum UI linked to the authenticated Supabase profile.
+  // This is a display/compatibility mapping only; permissions are always checked via profiles.role.
+  async function syncLocalProfile(authUser) {
+    if (!client || !authUser) return null;
+    const { data: profile, error } = await client.from('profiles')
+      .select('username,role').eq('id', authUser.id).maybeSingle();
+    if (error) throw error;
+    if (!profile) return null;
+    window.DEMO_DB = window.DEMO_DB || {};
+    if (!Array.isArray(window.DEMO_DB.users)) window.DEMO_DB.users = [];
+    let localUser = window.DEMO_DB.users.find(u =>
+      String(u.supabaseUid || '') === authUser.id ||
+      String(u.name || '').toLowerCase() === String(profile.username || '').toLowerCase()
+    );
+    if (!localUser) {
+      let numericId = 0;
+      for (const ch of authUser.id.replace(/-/g, '').slice(0, 8)) numericId = (numericId * 31 + ch.charCodeAt(0)) % 2000000000;
+      numericId = Math.max(100000, numericId);
+      while (window.DEMO_DB.users.some(u => Number(u.id) === numericId)) numericId = numericId >= 2000000000 ? 100000 : numericId + 1;
+      localUser = { id: numericId, name: profile.username || (authUser.email || 'Участник').split('@')[0], rating: 0, posts: 0, likes: 0, dislikes: 0, joined: new Date().toLocaleDateString('ru-RU'), avatar: String(profile.username || 'У').slice(0,1).toUpperCase(), color: '#65745c', online: true, usdt: 0, guarant: 0, deposits: 0, awards: [], bio: 'Профиль участника Supabase.', status: 'Участник' };
+      window.DEMO_DB.users.push(localUser);
+    }
+    localUser.supabaseUid = authUser.id;
+    localUser.role = profile.role === 'admin' ? 'Администратор' : 'Участник';
+    localUser.status = profile.role === 'admin' ? 'Администратор' : (localUser.status || 'Участник');
+    localStorage.setItem('PROBIV_USER_ID', String(localUser.id));
+    localStorage.setItem('PROBIV_MEMBER', '1');
+    localStorage.setItem('PROBIV_AUTH_UID', authUser.id);
+    try {
+      localStorage.setItem('PROBIV_DEMO_DB', JSON.stringify(window.DEMO_DB));
+      localStorage.setItem('PROBIV_DB_VERSION', window.DEMO_DB_VERSION || 'v10-supabase');
+    } catch (e) { console.warn('[Supabase] local profile mapping persistence failed:', e.message); }
+    return localUser;
+  }
+
   async function signIn(email, password) {
     if (!client) throw new Error('Supabase не настроен. Проверьте supabase-config.js.');
     const { data, error } = await client.auth.signInWithPassword({ email, password });
     if (error) throw error;
     const role = await getRole(); verifiedAdmin = role === 'admin';
-    const { data: profile, error: profileError } = await client.from('profiles').select('username,role').eq('id', data.user.id).maybeSingle();
-    if (profileError) throw profileError;
-    if (profile && window.DEMO_DB) {
-      let localUser = (window.DEMO_DB.users || []).find(u => String(u.name).toLowerCase() === String(profile.username).toLowerCase());
-      if (!localUser) {
-        let numericId = 0;
-        for (const ch of data.user.id.replace(/-/g, '').slice(0, 8)) numericId = (numericId * 31 + ch.charCodeAt(0)) % 2000000000;
-        numericId = Math.max(100000, numericId);
-        while ((window.DEMO_DB.users || []).some(u => Number(u.id) === numericId)) numericId = numericId >= 2000000000 ? 100000 : numericId + 1;
-        localUser = { id: numericId, name: profile.username, role: profile.role === 'admin' ? 'Администратор' : 'Участник', rating: 0, posts: 0, likes: 0, dislikes: 0, joined: new Date().toLocaleDateString('ru-RU'), avatar: String(profile.username).slice(0,1).toUpperCase(), color: '#65745c', online: true, usdt: 0, guarant: 0, deposits: 0, awards: [], bio: 'Профиль участника Supabase.', status: 'Участник' };
-        window.DEMO_DB.users.push(localUser);
-      }
-      localStorage.setItem('PROBIV_USER_ID', String(localUser.id));
-      localStorage.setItem('PROBIV_MEMBER', '1');
-      // Persist the local UI mapping so legacy pages can resolve currentUser()
-      // after navigation/reload. The authoritative identity and role remain Supabase.
-      try {
-        localStorage.setItem('PROBIV_DEMO_DB', JSON.stringify(window.DEMO_DB));
-        localStorage.setItem('PROBIV_DB_VERSION', window.DEMO_DB_VERSION || 'v10-supabase');
-      } catch (storageError) { console.warn('[Supabase] local profile mapping was not persisted:', storageError.message); }
-    }
+    await syncLocalProfile(data.user);
     return { user: data.user, role };
   }
   async function signUp(email, password, username, inviteCode) {
@@ -143,7 +158,18 @@
   };
 
   if (client) {
-    client.auth.onAuthStateChange((_event, session) => { if (!session) verifiedAdmin = false; });
+    client.auth.onAuthStateChange((event, session) => {
+      if (!session) {
+        verifiedAdmin = false;
+        ['PROBIV_MEMBER','PROBIV_USER_ID','PROBIV_AUTH_UID'].forEach(k => localStorage.removeItem(k));
+        return;
+      }
+      // Supabase emits this during initial restore; defer queries to avoid auth-lock deadlocks.
+      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        Promise.resolve().then(() => syncLocalProfile(session.user)).catch(e => console.warn('[Supabase] profile sync failed:', e.message));
+        getRole().then(role => { verifiedAdmin = role === 'admin'; }).catch(e => console.warn('[Supabase] role check failed:', e.message));
+      }
+    });
     // State refresh is deliberately non-blocking so the static pages still render if the network is down.
     refreshState().then(result => {
       if (result.loaded) {
