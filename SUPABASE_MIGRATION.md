@@ -47,3 +47,8 @@ where p.id = u.id and lower(u.email) = lower('YOUR_ADMIN_EMAIL');
 
 ## What has not been verified
 The SQL has not been run against the live project from this environment. No live Supabase API calls or real Auth/RLS integration tests were performed here. The automated checks below are local static/syntax/integrity tests only. After applying SQL, run the manual integration checks above before using the site with real users.
+
+
+## Fix for invite persistence (`DELETE requires a WHERE clause`)
+
+If the admin UI reports this error while saving, run the updated `supabase/001_schema.sql` function definition in the Supabase SQL Editor. The `admin_replace_invites(jsonb)` function now upserts provided codes and deletes only invite rows omitted from the submitted list using an explicit `WHERE NOT EXISTS` condition. It still checks `public.is_app_admin()`. Do not assume the whole save failed: `app_state` may have been upserted before invite synchronization returned an error. Verify `public.app_state` after applying the fix.

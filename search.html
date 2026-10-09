@@ -34,7 +34,7 @@
 
   // Lists opened from the forum-statistics links (search.html?type=...)
   function listByType(){
-    const threads=(DEMO_DB.threads||[]).slice().sort(function(a,b){return Number(b.id)-Number(a.id)});
+    const threads=(DEMO_DB.threads||[]).filter(canGuestRead).slice().sort(function(a,b){return Number(b.id)-Number(a.id)});
     if(type==="threads"||type==="messages") return block(type==="threads"?"Все темы":"Темы с сообщениями",threads,threadLink,true);
     if(type==="users") return block("Все пользователи",(DEMO_DB.users||[]).slice().sort(function(a,b){return Number(b.id)-Number(a.id)}),userLink,true);
     if(type==="reputation") return block("Пользователи по репутации",(DEMO_DB.users||[]).slice().sort(function(a,b){return (b.rating||0)-(a.rating||0)}),userLink,true);
@@ -48,11 +48,10 @@
       return;
     }
 
-    const member=isMember()||isPreviewMode();
     const threadHits=(DEMO_DB.threads||[]).filter(function(t){
+      if(!canGuestRead(t)) return false;
       const author=displayUser(t.author);
-      // Guests must not be able to probe the text of invite-only threads through search.
-      const bodies=(t.guestAccess==="invite"&&!member)?"":(t.posts||[]).map(function(x){return x.text||""}).join(" ");
+      const bodies=(t.posts||[]).map(function(x){return x.text||""}).join(" ");
       return ((t.title||"")+" "+(t.category||"")+" "+author.name+" "+bodies).toLowerCase().includes(query);
     });
     const userHits=(DEMO_DB.users||[]).filter(function(u){

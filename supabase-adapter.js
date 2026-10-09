@@ -10,11 +10,18 @@
   let verifiedAdmin = false;
   let syncBusy = false;
   let lastRemoteHash = '';
+  let readyResolve;
+  let saveQueue = Promise.resolve();
+  window.SupabaseReady = new Promise(resolve => { readyResolve = resolve; });
+  window.__remoteStateLoaded = false;
+  window.__remoteRole = null;
 
   function publicState() {
     const state = JSON.parse(JSON.stringify(window.DEMO_DB || {}));
     delete state.adminAuth;
     delete state.invites; // invitation codes are never published in the public JSON state
+    // Topic bodies and posts live in forum_threads, where RLS can hide closed topics.
+    delete state.threads;
     if (Array.isArray(state.users)) state.users = state.users.map(u => {
       const copy = Object.assign({}, u); delete copy.passHash; delete copy.password; return copy;
     });
@@ -31,30 +38,31 @@
   }
   async function refreshState() {
     if (!client) return { ok: false, reason: 'Supabase client is not configured.' };
-    const { data, error } = await client.from('app_state').select('state').eq('id', 1).maybeSingle();
+    const [{ data, error }, threadResult] = await Promise.all([
+      client.from('app_state').select('state').eq('id', 1).maybeSingle(),
+      client.from('forum_threads').select('data').order('id', { ascending: true })
+    ]);
     if (error) return { ok: false, reason: error.message };
-    if (!data || !data.state) {
-      try { await refreshAdminInvites(); } catch (e) { console.warn('[Supabase] invite load failed:', e.message); }
-      return { ok: true, empty: true };
-    }
-    // Remote state is sanitized at write time. Merge only fields supported by the current UI.
-    const previousHash = hash(publicState());
-    const merged = Object.assign({}, window.DEMO_DB || {}, data.state);
+    if (threadResult.error) return { ok: false, reason: 'Загрузка тем: ' + threadResult.error.message };
+    const remoteState = data && data.state ? data.state : {};
+    try { window.__remoteRole = await getRole(); } catch (_) { window.__remoteRole = null; }
+    // Never fall back to bundled/local topic bodies: only rows allowed by server-side RLS are used.
+    const remoteThreads = (threadResult.data || []).map(row => row.data).filter(Boolean);
+    const merged = Object.assign({}, window.DEMO_DB || {}, remoteState);
+    merged.threads = remoteThreads;
     delete merged.adminAuth;
+    delete merged.invites;
     window.DEMO_DB = merged;
+    window.__remoteStateLoaded = true;
     // Media metadata and public URLs are sourced from the dedicated media table.
     const mediaResult = await refreshMediaMetadata();
     if (!mediaResult.ok) console.warn('[Supabase] media metadata read failed:', mediaResult.reason);
-    lastRemoteHash = hash(data.state);
+    lastRemoteHash = hash({ state: remoteState, threads: remoteThreads });
     try {
       localStorage.setItem('PROBIV_DEMO_DB', JSON.stringify(window.DEMO_DB));
       localStorage.setItem('PROBIV_DB_VERSION', 'v10-supabase');
     } catch (_) {}
     try { await refreshAdminInvites(); } catch (e) { console.warn('[Supabase] invite load failed:', e.message); }
-    if (previousHash !== lastRemoteHash && sessionStorage.getItem('PROBIV_REMOTE_APPLIED') !== lastRemoteHash) {
-      sessionStorage.setItem('PROBIV_REMOTE_APPLIED', lastRemoteHash);
-      location.reload();
-    }
     return { ok: true, loaded: true };
   }
   async function refreshAdminInvites() {
@@ -74,13 +82,13 @@
       verifiedAdmin = role === 'admin';
       if (!verifiedAdmin) return { ok: false, reason: 'Only a Supabase admin can publish shared site changes.' };
       const state = publicState();
-      const { data: { user } } = await client.auth.getUser();
-      const { error } = await client.from('app_state').upsert({ id: 1, state, updated_at: new Date().toISOString(), updated_by: user.id }, { onConflict: 'id' });
-      if (error) return { ok: false, reason: error.message };
+      const threads = (window.DEMO_DB && Array.isArray(window.DEMO_DB.threads)) ? window.DEMO_DB.threads : [];
+      const saveResult = await client.rpc('admin_save_site_state', { p_state: state, p_threads: threads });
+      if (saveResult.error) return { ok: false, reason: saveResult.error.message };
       const invites = (window.DEMO_DB && Array.isArray(window.DEMO_DB.invites)) ? window.DEMO_DB.invites : [];
       const inviteResult = await client.rpc('admin_replace_invites', { p_invites: invites });
       if (inviteResult.error) return { ok: false, reason: inviteResult.error.message };
-      lastRemoteHash = hash(state);
+      lastRemoteHash = hash({ state, threads });
       return { ok: true };
     } catch (e) { return { ok: false, reason: e.message || String(e) }; }
     finally { syncBusy = false; }
@@ -180,6 +188,7 @@
       localUser = { id: numericId, name: profile.username || (authUser.email || 'Участник').split('@')[0], rating: 0, posts: 0, likes: 0, dislikes: 0, joined: new Date().toLocaleDateString('ru-RU'), avatar: String(profile.username || 'У').slice(0,1).toUpperCase(), color: '#65745c', online: true, usdt: 0, guarant: 0, deposits: 0, awards: [], bio: 'Профиль участника Supabase.', status: 'Участник' };
       window.DEMO_DB.users.push(localUser);
     }
+    window.__remoteRole = profile.role || null;
     localUser.supabaseUid = authUser.id;
     localUser.role = profile.role === 'admin' ? 'Администратор' : 'Участник';
     localUser.status = profile.role === 'admin' ? 'Администратор' : (localUser.status || 'Участник');
@@ -236,6 +245,7 @@
   if (client) {
     client.auth.onAuthStateChange((event, session) => {
       if (!session) {
+        window.__remoteRole = null;
         verifiedAdmin = false;
         ['PROBIV_MEMBER','PROBIV_USER_ID','PROBIV_AUTH_UID'].forEach(k => localStorage.removeItem(k));
         return;
@@ -248,17 +258,19 @@
     });
     // State refresh is deliberately non-blocking so the static pages still render if the network is down.
     refreshState().then(result => {
+      if (!result.ok) console.warn('[Supabase] state read failed:', result.reason);
       if (result.loaded) {
         if (typeof window.renderHome === 'function') window.renderHome();
         if (typeof window.renderThread === 'function') window.renderThread();
       }
-      if (!result.ok) console.warn('[Supabase] state read failed:', result.reason);
-    }).catch(e => console.warn('[Supabase] state read failed:', e.message));
+      readyResolve(result);
+    }).catch(e => { console.warn('[Supabase] state read failed:', e.message); readyResolve({ ok: false, reason: e.message }); });
     const originalSave = window.saveDB;
     if (typeof originalSave === 'function') {
       window.saveDB = function () {
         const localOk = originalSave.apply(this, arguments);
-        window.__supabasePersistPromise = persistState().then(r => {
+        saveQueue = saveQueue.catch(() => {}).then(() => persistState());
+        window.__supabasePersistPromise = saveQueue.then(r => {
           if (!r.ok && r.reason !== 'Only a Supabase admin can publish shared site changes.') console.warn('[Supabase] save failed:', r.reason);
           if (!r.ok && window.isAdmin && window.isAdmin()) alert('Локально сохранено, но в Supabase не записано: ' + r.reason);
           return r;
@@ -267,5 +279,5 @@
       };
       window.saveDemoDB = window.saveDB;
     }
-  }
+  } else { readyResolve({ ok: false, reason: 'Supabase client is not configured.' }); }
 })();

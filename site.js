@@ -398,7 +398,13 @@
   };
 
   window.canGuestRead = function (t) {
-    return !!t && (isPreviewMode() || t.guestAccess !== "invite" || isMember());
+    if (!t) return false;
+    if (t.guestAccess !== "invite") return true;
+    // When Supabase is active, stale localStorage and ?preview=1 are never access credentials.
+    if (window.SupabaseAdapter && window.SupabaseAdapter.enabled) {
+      return !!window.__remoteStateLoaded && ["admin", "moderator", "member"].includes(window.__remoteRole);
+    }
+    return isPreviewMode() || isMember();
   };
 
   window.gatePage = function (t) {
@@ -687,7 +693,10 @@
     const recent = document.getElementById("recentTopics");
     if (!recent) return;
 
-    recent.innerHTML = (DEMO_DB.recent || []).map(function (x) {
+    recent.innerHTML = (DEMO_DB.recent || []).filter(function (x) {
+      const t = recentEntryToThread(x);
+      return !t || canGuestRead(t);
+    }).map(function (x) {
       return `<a class="recent-row" href="${topicHrefByEntry(x)}">
         <span>${x.pinned ? "📌" : "»"}</span>
         <div><b>${esc(x.title)}</b><small>${esc(displayUser(x.author).name)} · ${esc(x.date)}</small></div>
@@ -700,7 +709,10 @@
     const hot = document.getElementById("hotTopics");
     if (!hot) return;
 
-    hot.innerHTML = (DEMO_DB.hotTopics || []).map(function (x) {
+    hot.innerHTML = (DEMO_DB.hotTopics || []).filter(function (x) {
+      const t = (DEMO_DB.threads || []).find(function (t0) { return t0.title === x.title; });
+      return !t || canGuestRead(t);
+    }).map(function (x) {
       const t = (DEMO_DB.threads || []).find(function (t0) {
         return t0.title === x.title;
       });
@@ -829,7 +841,7 @@
       </a>`;
     }
 
-    const recentRows = (DEMO_DB.recent || []).slice(0, 35).map(rowFromRecent).join("");
+    const recentRows = (DEMO_DB.recent || []).filter(function (entry) { const t = recentEntryToThread(entry); return !t || canGuestRead(t); }).slice(0, 35).map(rowFromRecent).join("");
     const topicRows = (DEMO_DB.threads || []).slice().sort(function (a, b) {
       return Number(b.id) - Number(a.id);
     }).map(function (t) {
@@ -867,7 +879,7 @@
 
     const rec = document.getElementById("rightRecent");
     if (rec) {
-      rec.innerHTML = (DEMO_DB.recent || []).slice(0, 7).map(function (x) {
+      rec.innerHTML = (DEMO_DB.recent || []).filter(function (x) { const t = recentEntryToThread(x); return !t || canGuestRead(t); }).slice(0, 7).map(function (x) {
         return `<a class="ref-mini" href="${topicHrefByEntry(x)}">
           <span class="mini-avatar">${esc(displayUser(x.author).avatar || "?")}</span>
           <span><b>${esc(x.title)}</b><small>${esc(displayUser(x.author).name)} · ${esc(x.date || "Сегодня")}</small></span>
@@ -877,7 +889,7 @@
 
     const reco = document.getElementById("rightRecommended");
     if (reco) {
-      reco.innerHTML = (DEMO_DB.hotTopics || []).slice(0, 5).map(function (x) {
+      reco.innerHTML = (DEMO_DB.hotTopics || []).filter(function (x) { const t = (DEMO_DB.threads || []).find(function (t0) { return t0.title === x.title; }); return !t || canGuestRead(t); }).slice(0, 5).map(function (x) {
         const t = (DEMO_DB.threads || []).find(function (t0) { return t0.title === x.title; });
         const href = t
           ? `thread.html?id=${encodeURIComponent(t.id)}`

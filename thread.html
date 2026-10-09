@@ -11,8 +11,14 @@
 <main class="main"><div class="shell"><section class="content"><div id="threadPage"></div></section></div></main>
 <footer>ДЕМО-ФОРУМ • СИНТЕТИЧЕСКИЕ ДАННЫЕ • НЕ РЕАЛЬНЫЕ ОПЕРАЦИИ</footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="data.js"></script><script src="site.js"></script><script src="supabase-adapter.js"></script><script>
-(function(){
+(async function(){
   const host=document.getElementById("threadPage");
+  host.innerHTML = '<div class="page-panel">Проверяем доступ к теме…</div>';
+  const syncResult = window.SupabaseReady ? await window.SupabaseReady : null;
+  if (window.SupabaseAdapter && window.SupabaseAdapter.enabled && !syncResult?.ok) {
+    host.innerHTML = '<div class="page-panel access-gate"><h1>Не удалось проверить доступ</h1><p>Обновите страницу позже. Содержимое темы не показано.</p></div>';
+    return;
+  }
   const rawId=q("id");
   const t=getThread(parseId(rawId));
 

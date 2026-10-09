@@ -28,7 +28,7 @@
   let page=Math.max(1,Number(q("page"))||1),per=12;
 
   function render(){
-    const list=(DEMO_DB.threads||[]).filter(function(t){return t.category===c.name});
+    const list=(DEMO_DB.threads||[]).filter(function(t){return t.category===c.name && canGuestRead(t)});
     const pages=Math.max(1,Math.ceil(list.length/per));
     page=Math.min(page,pages);
 

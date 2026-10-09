@@ -32,7 +32,7 @@
   document.title=u.name+" — профиль";
 
   const threadList=(DEMO_DB.threads||[]).filter(function(t){
-    return Number(t.author)===Number(u.id)||(t.posts||[]).some(function(p){return Number(p.user)===Number(u.id)});
+    return canGuestRead(t) && (Number(t.author)===Number(u.id)||(t.posts||[]).some(function(p){return Number(p.user)===Number(u.id)}));
   }).map(function(t){
     return `<div class="list-row"><a class="row-link" href="thread.html?id=${encodeURIComponent(t.id)}"><b>${esc(t.title)}</b><div class="meta">${esc(t.date)} · ${fmt(t.views)} просмотров · ${fmt(t.answers)} ответов</div></a></div>`;
   }).join("") || '<div class="modal-note">У пользователя пока нет сообщений в демонстрационных темах.</div>';

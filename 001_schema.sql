@@ -104,12 +104,35 @@ declare item jsonb;
 begin
   if not public.is_app_admin() then raise exception 'admin role required'; end if;
   if jsonb_typeof(p_invites) <> 'array' then raise exception 'invites must be a JSON array'; end if;
-  delete from public.invites;
-  for item in select * from jsonb_array_elements(p_invites) loop
+
+  -- Upsert supplied invitation codes instead of deleting the whole table first.
+  for item in select value from jsonb_array_elements(p_invites) as x(value) loop
+    if nullif(trim(item->>'code'), '') is null then
+      raise exception 'Each invite must have a non-empty code';
+    end if;
     insert into public.invites(code, label, active, max_uses, uses)
-    values (item->>'code', coalesce(item->>'label',''), coalesce((item->>'active')::boolean,true),
-      greatest(coalesce((item->>'maxUses')::integer,0),0), greatest(coalesce((item->>'uses')::integer,0),0));
+    values (
+      trim(item->>'code'),
+      coalesce(item->>'label',''),
+      coalesce((item->>'active')::boolean,true),
+      greatest(coalesce((item->>'maxUses')::integer,0),0),
+      greatest(coalesce((item->>'uses')::integer,0),0)
+    )
+    on conflict (code) do update set
+      label = excluded.label,
+      active = excluded.active,
+      max_uses = excluded.max_uses,
+      uses = greatest(public.invites.uses, excluded.uses);
   end loop;
+
+  -- Delete only codes intentionally omitted from the submitted list.
+  -- The WHERE clause avoids an unqualified table-wide DELETE.
+  delete from public.invites i
+   where not exists (
+     select 1
+       from jsonb_array_elements(p_invites) as x(value)
+      where trim(x.value->>'code') = i.code
+   );
 end $$;
 revoke all on function public.admin_replace_invites(jsonb) from public, anon;
 grant execute on function public.admin_replace_invites(jsonb) to authenticated;
