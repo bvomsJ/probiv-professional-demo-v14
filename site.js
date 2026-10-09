@@ -265,9 +265,9 @@
   // isMember(): the visitor may read member-only content (a logged-in user, or an invite-code guest).
   // canPost(): the visitor has a real user identity and may write (reply, react, create topics).
   window.isMember = function () {
-    // Supabase Auth session marker: the numeric demo-user mapping may be absent
-    // for a newly created account, but a successful Supabase login is still a member.
-    if (localStorage.getItem("PROBIV_MEMBER") === "1" && localStorage.getItem("PROBIV_AUTH_UID")) return true;
+    // Supabase Auth is authoritative. Older pages may clear the legacy MEMBER
+    // flag during startup, so a persisted Supabase UID must still count as signed in.
+    if (localStorage.getItem("PROBIV_AUTH_UID")) return true;
     if (localStorage.getItem("PROBIV_MEMBER") !== "1") return false;
     const uid = Number(localStorage.getItem("PROBIV_USER_ID"));
     if (uid > 0 && getUser(uid)) return true;
@@ -280,7 +280,19 @@
 
   window.currentUser = function () {
     if (!window.isMember()) return undefined;
-    return getUser(Number(localStorage.getItem("PROBIV_USER_ID")));
+    const numericId = Number(localStorage.getItem("PROBIV_USER_ID"));
+    const mapped = numericId > 0 ? getUser(numericId) : undefined;
+    if (mapped) return mapped;
+    // Recover the local UI profile from the persisted Supabase UID when legacy
+    // session keys are incomplete. This mapping is for display only; Supabase
+    // remains authoritative for identity and permissions.
+    const authUid = localStorage.getItem("PROBIV_AUTH_UID");
+    if (authUid && window.DEMO_DB && Array.isArray(window.DEMO_DB.users)) {
+      const mappedId = localStorage.getItem("PROBIV_USER_ID");
+      const candidate = mappedId ? window.DEMO_DB.users.find(u => String(u.id) === mappedId) : undefined;
+      if (candidate) return candidate;
+    }
+    return undefined;
   };
 
   window.canPost = function () {
