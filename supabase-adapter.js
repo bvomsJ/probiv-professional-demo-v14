@@ -101,6 +101,12 @@
       }
       localStorage.setItem('PROBIV_USER_ID', String(localUser.id));
       localStorage.setItem('PROBIV_MEMBER', '1');
+      // Persist the local UI mapping so legacy pages can resolve currentUser()
+      // after navigation/reload. The authoritative identity and role remain Supabase.
+      try {
+        localStorage.setItem('PROBIV_DEMO_DB', JSON.stringify(window.DEMO_DB));
+        localStorage.setItem('PROBIV_DB_VERSION', window.DEMO_DB_VERSION || 'v10-supabase');
+      } catch (storageError) { console.warn('[Supabase] local profile mapping was not persisted:', storageError.message); }
     }
     return { user: data.user, role };
   }

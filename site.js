@@ -265,6 +265,9 @@
   // isMember(): the visitor may read member-only content (a logged-in user, or an invite-code guest).
   // canPost(): the visitor has a real user identity and may write (reply, react, create topics).
   window.isMember = function () {
+    // Supabase Auth session marker: the numeric demo-user mapping may be absent
+    // for a newly created account, but a successful Supabase login is still a member.
+    if (localStorage.getItem("PROBIV_MEMBER") === "1" && localStorage.getItem("PROBIV_AUTH_UID")) return true;
     if (localStorage.getItem("PROBIV_MEMBER") !== "1") return false;
     const uid = Number(localStorage.getItem("PROBIV_USER_ID"));
     if (uid > 0 && getUser(uid)) return true;
