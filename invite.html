@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Приглашение — PROBIV.CC</title><link rel="stylesheet" href="style.css"></head>
+<title>Приглашение — PROBIV.CC</title><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
 <body>
 <div class="topline"></div>
-<header class="header"><div class="shell header-row"><div><a href="index.html" class="logo">PROBIV.CC</a><div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div></div><div class="network-ad">ПФР &nbsp; БАНКИ &nbsp; РОСРЕЕСТР</div></div>
+<header class="header"><div class="shell header-row"><div><a href="index.html" class="logo">PROBIV.CC</a><div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div></div><div class="network-ad">ДЕМО-ФОРУМ • ПРОФИЛИ • РЕЙТИНГИ</div></div>
 <nav class="shell nav"><a data-link-key="forum" href="index.html"><strong>⌂</strong>Форум</a><a data-link-key="profile" href="profile.html?id=1"><strong>♙</strong>Профиль</a><a data-link-key="search" href="search.html"><strong>⌕</strong>Поиск</a><a data-link-key="rules" href="rules.html"><strong>▤</strong>Правила</a><a data-link-key="help" href="help.html"><strong>?</strong>Помощь</a><a data-link-key="admin" href="admin.html"><strong>⚙</strong>Админ</a></nav></header>
 <div class="crumb"><span><a href="index.html">PROBIV.CC</a> » Приглашение</span><span data-auth><a href="login.html">Вход</a> · <a href="register.html">Регистрация</a></span></div>
 <main class="main"><div class="shell"><section class="content">
@@ -22,11 +22,16 @@
 function activate(){
   const code=document.getElementById("inviteCode").value.trim();
   const msg=document.getElementById("msg");
+  if(!code){
+    msg.className="invite-message bad-msg";
+    msg.textContent="Введите код приглашения.";
+    return;
+  }
   if(setMember(code)){
     msg.className="invite-message ok";
-    msg.textContent="Приглашение принято. Доступ участника активирован.";
-    const ret=new URLSearchParams(location.search).get("return");
-    setTimeout(()=>location.href=ret||"index.html",500);
+    msg.textContent="Приглашение принято. Доступ для чтения закрытых тем активирован (писать могут только зарегистрированные участники).";
+    const ret=authReturn("index.html");
+    setTimeout(function(){location.href=ret},700);
   }else{
     msg.className="invite-message bad-msg";
     msg.textContent="Код не найден, отключён или исчерпал лимит использований.";

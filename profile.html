@@ -1,5 +1,55 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Профиль — PROBIV.CC</title><link rel="stylesheet" href="style.css"></head><body><div class="topline"></div><header class="header"><div class="shell header-row"><div><a class="logo" href="index.html">PROBIV.CC</a><div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div></div><div class="network-ad">ДЕМО-ФОРУМ • ПРОФИЛИ • РЕЙТИНГИ</div></div><nav class="shell nav"><a data-link-key="forum" href="index.html"><strong>⌂</strong>Форум</a><a data-link-key="profile" href="profile.html?id=1"><strong>♙</strong>Профиль</a><a data-link-key="search" href="search.html"><strong>⌕</strong>Поиск</a><a data-link-key="rules" href="rules.html"><strong>▤</strong>Правила</a><a data-link-key="help" href="help.html"><strong>?</strong>Помощь</a><a data-link-key="admin" href="admin.html"><strong>⚙</strong>Админ</a></nav></header><div class="crumb"><span>PROBIV.CC » Профиль</span><span><a href="login.html">Вход</a> · <a href="register.html">Регистрация</a></span></div><div class="demo-strip shell">ДЕМО · СИНТЕТИЧЕСКИЕ ДАННЫЕ · НЕ РЕАЛЬНЫЕ ПОЛЬЗОВАТЕЛИ И ОПЕРАЦИИ</div><main class="main"><div class="shell"><section class="content"><div id="profilePage"></div></section></div></main><footer>Демонстрационный форум • синтетические данные</footer><script src="data.js"></script><script src="site.js"></script><script>
-if(!isMember() && !(window.isPreviewMode&&window.isPreviewMode())){
- document.getElementById("profilePage").innerHTML='<div class="page-panel access-gate"><div class="lock-icon">🔐</div><div class="demo-label">ТРЕБУЕТСЯ ВХОД</div><h1>Профиль доступен участникам</h1><p>Гостевой пользователь может просматривать только открытые разделы и темы. Для просмотра профиля необходимо войти или зарегистрироваться.</p><div class="gate-actions"><a class="gold-btn" href="login.html?return='+encodeURIComponent(location.href)+'">Войти</a><a class="small-btn" href="register.html?return='+encodeURIComponent(location.href)+'">Регистрация</a></div></div>';
-} else {
-const requestedId=Number(q("id")); const u=(DEMO_DB.users||[]).find(x=>x.id===requestedId) || currentUser();document.title=u.name+" — профиль";document.getElementById("profilePage").innerHTML=`<h1 class="page-title">Профиль пользователя</h1><div class="profile-card"><aside class="profile-side">${avatar(u,"profile-big")}<h1>${esc(u.name)}</h1><span class="role">${esc(u.role)}</span><p>${u.online?"● Сейчас на форуме":"○ Не в сети"}</p><p class="meta">ID #${u.id}</p><div class="awards">${u.awards.map(a=>`<span class="award">${esc(a)}</span>`).join("")}</div></aside><section class="profile-main"><h2>${esc(u.name)}</h2><p>${esc(u.bio)}</p><div class="stat-grid"><div class="stat"><b>${fmt(u.rating)}</b><span>Рейтинг</span></div><div class="stat"><b>${fmt(u.posts)}</b><span>Сообщений</span></div><div class="stat"><b>${fmt(u.likes)}</b><span>Лайков</span></div><div class="stat"><b>${fmt(u.dislikes)}</b><span>Дизлайков</span></div></div><div class="info-table"><div><b>Дата регистрации</b><span>${u.joined}</span></div><div><b>Статус</b><span>${esc(u.status)}</span></div><div><b>Репутация</b><span>${fmt(u.rating)}</span></div><div><b>Гарант (демо)</b><span>${fmt(u.guarant)}</span></div><div><b>USDT (демо)</b><span>${fmt(u.usdt)}</span></div><div><b>Депозит (демо)</b><span>${fmt(u.deposits)} ₽</span></div></div><h3>Награды и достижения</h3><div class="awards">${u.awards.map(a=>`<span class="award">${esc(a)}</span>`).join("")}</div><div class="user-threads"><h3>Темы и сообщения пользователя</h3>${DEMO_DB.threads.filter(t=>t.author===u.id||t.posts.some(p=>p.user===u.id)).map(t=>`<div class="list-row" onclick="location.href='thread.html?id=${t.id}'"><b>${esc(t.title)}</b><div class="meta">${esc(t.date)} · ${fmt(t.views)} просмотров · ${fmt(t.answers)} ответов</div></div>`).join("")}</div></section></div>`;}</script></body></html>
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Профиль — PROBIV.CC</title><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body>
+<div class="topline"></div>
+<header class="header"><div class="shell header-row"><div><a href="index.html" class="logo">PROBIV.CC</a><div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div></div><div class="network-ad">ДЕМО-ФОРУМ • ПРОФИЛИ • РЕЙТИНГИ</div></div>
+<nav class="shell nav"><a data-link-key="forum" href="index.html"><strong>⌂</strong>Форум</a><a data-link-key="profile" href="profile.html?id=1"><strong>♙</strong>Профиль</a><a data-link-key="search" href="search.html"><strong>⌕</strong>Поиск</a><a data-link-key="rules" href="rules.html"><strong>▤</strong>Правила</a><a data-link-key="help" href="help.html"><strong>?</strong>Помощь</a><a data-link-key="admin" href="admin.html"><strong>⚙</strong>Админ</a></nav></header>
+<div class="crumb"><span><a href="index.html">PROBIV.CC</a> » Профиль</span><span data-auth><a href="login.html">Вход</a> · <a href="register.html">Регистрация</a></span></div>
+<div class="demo-strip shell">ДЕМО · СИНТЕТИЧЕСКИЕ ДАННЫЕ · НЕ РЕАЛЬНЫЕ ПОЛЬЗОВАТЕЛИ И ОПЕРАЦИИ</div>
+<main class="main"><div class="shell"><section class="content"><div id="profilePage"></div></section></div></main>
+<footer>Демонстрационный форум • синтетические данные</footer>
+<script src="data.js"></script><script src="site.js"></script><script>
+(function(){
+  const host=document.getElementById("profilePage");
+  const preview=window.isPreviewMode&&window.isPreviewMode();
+
+  if(!isMember() && !preview){
+    host.innerHTML='<div class="page-panel access-gate"><div class="lock-icon">🔐</div><div class="demo-label">ТРЕБУЕТСЯ ВХОД</div><h1>Профиль доступен участникам</h1><p>Гостевой пользователь может просматривать только открытые разделы и темы. Для просмотра профиля необходимо войти или зарегистрироваться.</p><div class="gate-actions"><a class="gold-btn" href="login.html?return='+encodeURIComponent(location.href)+'">Войти</a><a class="small-btn" href="register.html?return='+encodeURIComponent(location.href)+'">Регистрация</a></div></div>';
+    authLinks();
+    return;
+  }
+
+  const rawId=q("id");
+  const u=rawId===null ? currentUser() : getUser(parseId(rawId)); // strict ID: no fallback to another user
+  if(!u){
+    host.innerHTML='<div class="page-panel access-gate"><div class="lock-icon">👤</div><div class="demo-label">ПРОФИЛЬ НЕ НАЙДЕН</div><h1>Пользователь отсутствует</h1><p>В синтетической базе нет пользователя с указанным ID.</p><div class="gate-actions"><a class="small-btn" href="index.html">Вернуться на форум</a><a class="small-btn" href="search.html">Поиск</a></div></div>';
+    authLinks();
+    return;
+  }
+
+  document.title=u.name+" — профиль";
+
+  const threadList=(DEMO_DB.threads||[]).filter(function(t){
+    return Number(t.author)===Number(u.id)||(t.posts||[]).some(function(p){return Number(p.user)===Number(u.id)});
+  }).map(function(t){
+    return `<div class="list-row"><a class="row-link" href="thread.html?id=${encodeURIComponent(t.id)}"><b>${esc(t.title)}</b><div class="meta">${esc(t.date)} · ${fmt(t.views)} просмотров · ${fmt(t.answers)} ответов</div></a></div>`;
+  }).join("") || '<div class="modal-note">У пользователя пока нет сообщений в демонстрационных темах.</div>';
+
+  host.innerHTML=
+    `<h1 class="page-title">Профиль пользователя</h1>`+
+    `<div class="profile-card">`+
+      `<aside class="profile-side">${avatar(u,"profile-big")}<h1>${esc(u.name)}</h1><span class="role">${esc(u.role)}</span><p>${u.online?"● Сейчас на форуме":"○ Не в сети"}</p><p class="meta">ID #${fmt(u.id)}</p><div class="awards">${(u.awards||[]).map(function(a){return `<span class="award">${esc(a)}</span>`}).join("")}</div></aside>`+
+      `<section class="profile-main"><h2>${esc(u.name)}</h2><p>${esc(u.bio||"")}</p>`+
+        `<div class="stat-grid"><div class="stat"><b>${fmt(u.rating)}</b><span>Рейтинг</span></div><div class="stat"><b>${fmt(u.posts)}</b><span>Сообщений</span></div><div class="stat"><b>${fmt(u.likes)}</b><span>Лайков</span></div><div class="stat"><b>${fmt(u.dislikes)}</b><span>Дизлайков</span></div></div>`+
+        `<div class="info-table"><div><b>Дата регистрации</b><span>${esc(u.joined||"—")}</span></div><div><b>Статус</b><span>${esc(u.status||"—")}</span></div><div><b>Репутация</b><span>${fmt(u.rating)}</span></div><div><b>Гарант (демо)</b><span>${fmt(u.guarant)}</span></div><div><b>USDT (демо)</b><span>${fmt(u.usdt)}</span></div><div><b>Депозит (демо)</b><span>${fmt(u.deposits)} ₽</span></div></div>`+
+        `<h3>Награды и достижения</h3><div class="awards">${(u.awards||[]).map(function(a){return `<span class="award">${esc(a)}</span>`}).join("")}</div>`+
+        `<div class="user-threads"><h3>Темы и сообщения пользователя</h3>${threadList}</div>`+
+      `</section>`+
+    `</div>`;
+
+  authLinks();
+})();
+</script>
+</body></html>

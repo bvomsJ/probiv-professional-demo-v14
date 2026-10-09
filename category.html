@@ -1,8 +1,95 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Раздел — PROBIV.CC</title><link rel="stylesheet" href="style.css"></head><body><div class="topline"></div><header class="header"><div class="shell header-row"><div><a href="index.html" class="logo">PROBIV.CC</a><div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div></div><div class="network-ad">ДЕМО-ФОРУМ • РАЗДЕЛЫ • ТЕМЫ</div></div><nav class="shell nav"><a data-link-key="forum" href="index.html"><strong>⌂</strong>Форум</a><a data-link-key="profile" href="profile.html?id=1"><strong>♙</strong>Профиль</a><a data-link-key="search" href="search.html"><strong>⌕</strong>Поиск</a><a data-link-key="rules" href="rules.html"><strong>▤</strong>Правила</a><a data-link-key="help" href="help.html"><strong>?</strong>Помощь</a><a data-link-key="admin" href="admin.html"><strong>⚙</strong>Админ</a></nav></header><div class="crumb"><span><a href="index.html">PROBIV.CC</a> » <span id="catCrumb">Раздел</span></span><span data-auth><a href="login.html">Вход</a> · <a href="register.html">Регистрация</a></span></div><div class="demo-strip shell">ДЕМО · СИНТЕТИЧЕСКИЙ РАЗДЕЛ · ЗАКРЫТЫЕ ТЕМЫ НЕ ПОМЕЧЕНЫ В СПИСКЕ</div><main class="main"><div class="shell"><div class="forum-bar" id="catTitle"></div><div class="notice" id="catDesc"></div><div class="content"><div id="catThreads"></div><div class="section-space" id="pager"></div><div class="page-panel section-space"><h3>Создать новую тему</h3><div class="form-row"><label>Заголовок</label><input id="newTitle" class="input"></div><div class="form-row"><label>Сообщение</label><textarea id="newText" class="textarea"></textarea></div><button class="gold-btn" onclick="newTopic()">Создать тему</button><div class="meta" style="margin-top:7px">Только для демонстрационного участника.</div></div></div></div></main><footer>ДЕМО-ФОРУМ • СИНТЕТИЧЕСКИЕ ДАННЫЕ</footer><script src="data.js"></script><script src="site.js"></script><script>
-const c=DEMO_DB.categories.find(x=>x.id===Number(q("id")))||DEMO_DB.categories[0];
-document.title=c.name+" — PROBIV.CC";document.getElementById("catCrumb").textContent=c.name;document.getElementById("catTitle").textContent=c.name;document.getElementById("catDesc").textContent=c.description;
-let page=Math.max(1,Number(q("page"))||1),per=8;
-function render(){let list=DEMO_DB.threads.filter(t=>t.category===c.name);let pages=Math.max(1,Math.ceil(list.length/per));page=Math.min(page,pages);document.getElementById("catThreads").innerHTML=list.slice((page-1)*per,page*per).map(threadRow).join("")||'<div class="notice">В этом разделе пока нет демонстрационных тем.</div>';document.getElementById("pager").innerHTML=Array.from({length:pages},(_,i)=>'<a class="small-btn" href="category.html?id='+c.id+'&page='+(i+1)+'">'+(i+1)+'</a>').join(" ");authLinks()}
-function newTopic(){if(!isMember()){location.href="login.html?return="+encodeURIComponent(location.href);return}let title=document.getElementById("newTitle").value.trim(),text=document.getElementById("newText").value.trim();if(!title||!text){alert("Заполните заголовок и сообщение.");return}let id=Math.max.apply(null,DEMO_DB.threads.map(x=>x.id))+1,uid=Number(localStorage.getItem("PROBIV_USER_ID"))||1;DEMO_DB.threads.unshift({id:id,title:title,category:c.name,author:uid,date:"08.10.2026",views:0,answers:0,pinned:false,guestAccess:"public",posts:[{user:uid,date:"08.10.2026",text:text,likes:0,dislikes:0}]});DEMO_DB.stats.topics++;DEMO_DB.stats.messages++;saveDemoDB();location.href="thread.html?id="+id}
-render();
-</script><script>if(typeof authLinks==="function"){authLinks()}</script></body></html>
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Раздел — PROBIV.CC</title><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"></head>
+<body>
+<div class="topline"></div>
+<header class="header"><div class="shell header-row"><div><a href="index.html" class="logo">PROBIV.CC</a><div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div></div><div class="network-ad">ДЕМО-ФОРУМ • РАЗДЕЛЫ • ТЕМЫ</div></div>
+<nav class="shell nav"><a data-link-key="forum" href="index.html"><strong>⌂</strong>Форум</a><a data-link-key="profile" href="profile.html?id=1"><strong>♙</strong>Профиль</a><a data-link-key="search" href="search.html"><strong>⌕</strong>Поиск</a><a data-link-key="rules" href="rules.html"><strong>▤</strong>Правила</a><a data-link-key="help" href="help.html"><strong>?</strong>Помощь</a><a data-link-key="admin" href="admin.html"><strong>⚙</strong>Админ</a></nav></header>
+<div class="crumb"><span><a href="index.html">PROBIV.CC</a> » <span id="catCrumb">Раздел</span></span><span data-auth><a href="login.html">Вход</a> · <a href="register.html">Регистрация</a></span></div>
+<div class="demo-strip shell">ДЕМО · СИНТЕТИЧЕСКИЙ РАЗДЕЛ · СОДЕРЖИМОЕ ВЫМЫШЛЕНО</div>
+<main class="main"><div class="shell"><div id="categoryPage"></div></div></main>
+<footer>ДЕМО-ФОРУМ • СИНТЕТИЧЕСКИЕ ДАННЫЕ</footer>
+<script src="data.js"></script><script src="site.js"></script><script>
+(function(){
+  const host=document.getElementById("categoryPage");
+  const rawId=parseId(q("id"));
+  const c=rawId===null ? null : (DEMO_DB.categories||[]).find(function(x){return Number(x.id)===rawId});
+
+  if(!c){
+    host.innerHTML='<div class="page-panel access-gate"><div class="lock-icon">📁</div><div class="demo-label">РАЗДЕЛ НЕ НАЙДЕН</div><h1>Такого раздела нет</h1><p>Указанный раздел отсутствует в синтетической базе.</p><div class="gate-actions"><a class="small-btn" href="index.html">Вернуться на форум</a></div></div>';
+    authLinks();
+    return;
+  }
+
+  document.title=c.name+" — PROBIV.CC";
+  document.getElementById("catCrumb").textContent=c.name;
+
+  let page=Math.max(1,Number(q("page"))||1),per=12;
+
+  function render(){
+    const list=(DEMO_DB.threads||[]).filter(function(t){return t.category===c.name});
+    const pages=Math.max(1,Math.ceil(list.length/per));
+    page=Math.min(page,pages);
+
+    host.innerHTML=
+      `<div class="forum-bar">${esc(c.name)}</div>`+
+      `<div class="notice">${esc(c.description||"")}</div>`+
+      `<div id="catThreads">${list.slice((page-1)*per,page*per).map(threadRow).join("")||'<div class="notice">В этом разделе пока нет демонстрационных тем.</div>'}</div>`+
+      `<div class="section-space pager-row">${Array.from({length:pages},function(_,i){return '<a class="small-btn '+(i+1===page?'active-page':'')+'" href="category.html?id='+encodeURIComponent(c.id)+'&page='+(i+1)+'">'+(i+1)+'</a>'}).join(" ")}</div>`+
+      `<div class="page-panel section-space"><h3>Создать новую тему</h3><div class="form-row"><label>Заголовок</label><input id="newTitle" class="input"></div><div class="form-row"><label>Сообщение</label><textarea id="newText" class="textarea"></textarea></div><button class="gold-btn" id="createTopicBtn">Создать тему</button><div class="meta" style="margin-top:7px">Только для демонстрационного участника.</div></div>`;
+
+    document.getElementById("createTopicBtn").addEventListener("click",newTopic);
+    authLinks();
+  }
+
+  function newTopic(){
+    if(!canPost()){
+      location.href="login.html?return="+encodeURIComponent(location.href);
+      return;
+    }
+
+    const title=document.getElementById("newTitle").value.trim();
+    const text=document.getElementById("newText").value.trim();
+
+    if(!title||!text){
+      alert("Заполните заголовок и сообщение.");
+      return;
+    }
+
+    if((DEMO_DB.threads||[]).some(function(x){return String(x.title).trim().toLowerCase()===title.toLowerCase()})){
+      alert("Тема с таким названием уже существует.");
+      return;
+    }
+
+    const ids=(DEMO_DB.threads||[]).map(function(x){return Number(x.id)||0});
+    const id=(ids.length?Math.max.apply(null,ids):100)+1;
+    const uid=Number(currentUser().id);
+    const now=todayStr();
+    const closed=c.section==="Закрытые разделы";
+
+    DEMO_DB.threads.unshift({
+      id:id,title:title,category:c.name,author:uid,date:now,
+      views:0,answers:0,pinned:false,guestAccess:closed?"invite":"public",mediaIds:[],
+      posts:[{user:uid,date:now,text:text,likes:0,dislikes:0,reactions:{},mediaIds:[]}]
+    });
+    DEMO_DB.recent=DEMO_DB.recent||[];
+    DEMO_DB.recent.unshift({title:title,author:uid,date:"Сегодня",answers:0,pinned:false});
+    c.topics=(Number(c.topics)||0)+1;
+    c.messages=(Number(c.messages)||0)+1;
+
+    DEMO_DB.stats.topics=Math.max(0,Number(DEMO_DB.stats.topics)||0)+1;
+    DEMO_DB.stats.messages=Math.max(0,Number(DEMO_DB.stats.messages)||0)+1;
+
+    const owner=getUser(uid);
+    if(owner) owner.posts=(Number(owner.posts)||0)+1;
+
+    if(!saveDB()) return;
+    location.href="thread.html?id="+encodeURIComponent(id);
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>

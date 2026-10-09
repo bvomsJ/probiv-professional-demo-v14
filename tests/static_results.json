@@ -1,0 +1,62 @@
+[
+ {
+  "name": "JS syntax: site.js",
+  "status": "PASS",
+  "note": ""
+ },
+ {
+  "name": "JS syntax: data.js",
+  "status": "PASS",
+  "note": ""
+ },
+ {
+  "name": "Inline <script> syntax (11 pages)",
+  "status": "PASS",
+  "note": ""
+ },
+ {
+  "name": "Local links/resources exist (href/src)",
+  "status": "PASS",
+  "note": ""
+ },
+ {
+  "name": "No duplicate id attributes in static HTML",
+  "status": "PASS",
+  "note": ""
+ },
+ {
+  "name": "getElementById targets exist (non-admin pages)",
+  "status": "PASS",
+  "note": ""
+ },
+ {
+  "name": "Page names referenced from JS/HTML all exist",
+  "status": "PASS",
+  "note": ""
+ },
+ {
+  "name": "CSS url() resources exist",
+  "status": "PASS",
+  "note": ""
+ },
+ {
+  "name": "Seed background file exists (background.png)",
+  "status": "PASS",
+  "note": ""
+ },
+ {
+  "name": "No unescaped DB fields interpolated into innerHTML (public pages + site.js)",
+  "status": "PASS",
+  "note": ""
+ },
+ {
+  "name": "No secrets / service_role keys / private keys in the repository",
+  "status": "PASS",
+  "note": ""
+ },
+ {
+  "name": "Seed data integrity (unique IDs, authors, categories, recent/hot links)",
+  "status": "PASS",
+  "note": "ok: 36 users, 25 threads, 9 categories"
+ }
+]
