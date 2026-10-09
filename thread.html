@@ -23,6 +23,13 @@
   const t=getThread(parseId(rawId));
 
   if(!t){
+    // RLS intentionally hides invite-only topics from guests. In Supabase mode,
+    // an absent row for a guest means the topic may be restricted: send them to login
+    // and preserve the original URL so they can return after authentication.
+    if (window.SupabaseAdapter && window.SupabaseAdapter.enabled && syncResult?.ok && !window.__remoteRole) {
+      location.replace("login.html?return=" + encodeURIComponent(location.href));
+      return;
+    }
     host.innerHTML='<div class="page-panel access-gate"><div class="lock-icon">🧵</div><div class="demo-label">ТЕМА НЕ НАЙДЕНА</div><h1>Такой темы нет</h1><p>Указанная тема отсутствует в синтетической базе.</p><div class="gate-actions"><a class="small-btn" href="index.html">Вернуться на форум</a><a class="small-btn" href="search.html">Поиск</a></div></div>';
     authLinks();
     return;
