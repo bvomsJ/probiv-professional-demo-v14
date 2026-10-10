@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Правила работы через Гарант-Сервис — архивная тема</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css">
+<style>
+/* Scoped, responsive styles for the archive topic. */
+.garant-page {
+  width: 100%;
+  max-width: 1500px;
+  min-width: 0;
+  margin: 18px auto 28px;
+  overflow: hidden;
+  border: 1px solid #c9c2b2;
+  background: #e9e5d9;
+  color: #252525;
+  box-shadow: 0 1px 4px #0002;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.45;
+}
+.garant-page,
+.garant-page * { box-sizing: border-box; }
+.garant-page img,
+.garant-page video,
+.garant-page iframe { max-width: 100%; }
+.garant-title {
+  margin: 0;
+  padding: 14px 16px 6px;
+  color: #222;
+  font-size: clamp(20px, 2.1vw, 27px);
+  font-weight: 400;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+.garant-meta {
+  padding: 0 16px 12px;
+  border-bottom: 1px solid #d1cbbd;
+  color: #858078;
+  font-size: 12px;
+}
+.garant-locked {
+  margin: 0;
+  padding: 10px 14px;
+  border-bottom: 1px solid #d0c9b8;
+  border-left: 4px solid #d99b3d;
+  background: #f7f3e8;
+  color: #514b41;
+  font-size: 13px;
+}
+.garant-post {
+  display: grid;
+  grid-template-columns: minmax(175px, 210px) minmax(0, 1fr);
+  align-items: stretch;
+  background: #f7f5ec;
+}
+.garant-user {
+  min-width: 0;
+  padding: 14px 12px;
+  border-right: 1px solid #d0cabb;
+  background: #f0ede3;
+  color: #5e5a53;
+  text-align: center;
+  font-size: 13px;
+}
+.garant-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 170px);
+  aspect-ratio: 1.3 / 1;
+  height: auto;
+  margin: 0 auto 12px;
+  background: #bd2791;
+  color: #f7d8ef;
+  font-size: clamp(64px, 7vw, 108px);
+  font-weight: 300;
+  line-height: 1;
+}
+.garant-username {
+  margin-bottom: 6px;
+  color: #1c1c82;
+  font-size: 17px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.garant-rank {
+  margin: 8px -12px 12px;
+  padding: 6px 4px;
+  background: #3333cc;
+  color: #fff;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.garant-stats {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 5px 8px;
+  text-align: left;
+  font-size: 12px;
+}
+.garant-stats span { min-width: 0; overflow-wrap: anywhere; }
+.garant-stats span:nth-child(2n) { color: #333; text-align: right; }
+.garant-content {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal !important;
+  overflow-x: hidden;
+  padding: 14px clamp(12px, 1.5vw, 22px) 24px;
+  background: #f8f7ef;
+  color: #252525;
+  font-size: clamp(14px, 1vw, 16px);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+.garant-content .bbWrapper { display: block; min-width: 0; width: 100%; max-width: 100%; white-space: normal !important; overflow-wrap: anywhere; word-break: normal; }
+.garant-content span, .garant-content b, .garant-content i { max-width: 100%; }
+.garant-content br { white-space: normal; }
+.garant-content p { margin: 0 0 14px; }
+.garant-content h3 { margin: 20px 0 6px; color: #16833b; font-size: 16px; }
+.garant-content h3.orange { color: #d99028; }
+.garant-content ul,
+.garant-content ol { max-width: 100%; margin: 5px 0 18px; padding-left: 26px; }
+.garant-content li { padding-left: 1px; margin: 2px 0; }
+.garant-content a { overflow-wrap: anywhere; }
+.garant-content .indent { margin-left: 22px; }
+.garant-content .warning {
+  margin: 14px 0;
+  padding: 10px 12px;
+  border: 1px solid #d9bd78;
+  background: #fff4d9;
+  color: #6e4a14;
+  font-size: 13px;
+}
+.garant-content .archive-contact {
+  margin-top: 24px;
+  padding: 10px 12px;
+  border-top: 1px solid #c9c2b2;
+  background: #f0ede3;
+  color: #605a50;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.garant-footer {
+  padding: 12px;
+  border-top: 1px solid #d0cabb;
+  background: #f1eee4;
+  color: #716b60;
+  text-align: center;
+  font-size: 12px;
+}
+@media (max-width: 900px) {
+  .garant-page { margin: 12px auto 22px; }
+  .garant-post { grid-template-columns: minmax(150px, 175px) minmax(0, 1fr); }
+  .garant-user { padding: 12px 10px; }
+  .garant-rank { margin-left: -10px; margin-right: -10px; }
+}
+@media (max-width: 640px) {
+  .garant-title { padding: 12px 12px 6px; font-size: 21px; }
+  .garant-meta { padding: 0 12px 10px; }
+  .garant-post { grid-template-columns: minmax(0, 1fr); }
+  .garant-user {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    grid-template-areas:
+      "avatar username"
+      "avatar role"
+      "avatar rank"
+      "stats stats";
+    align-content: start;
+    align-items: center;
+    column-gap: 12px;
+    row-gap: 4px;
+    padding: 12px;
+    border-right: 0;
+    border-bottom: 1px solid #d0cabb;
+    text-align: left;
+  }
+  .garant-avatar {
+    grid-area: avatar;
+    width: 72px;
+    aspect-ratio: 1;
+    margin: 0;
+    font-size: 52px;
+  }
+  .garant-username { grid-area: username; margin: 0; font-size: 16px; }
+  .garant-username + div { grid-area: role; align-self: start; }
+  .garant-rank { grid-area: rank; justify-self: start; margin: 0; padding: 4px 7px; }
+  .garant-stats {
+    grid-area: stats;
+    grid-template-columns: minmax(0, 1fr) auto;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #d8d1c3;
+  }
+  .garant-content { padding: 12px 13px 20px; font-size: 14px; line-height: 1.5; }
+  .garant-content ul, .garant-content ol { padding-left: 22px; }
+  .garant-content br + br { line-height: 1.1; }
+  .garant-locked { padding: 9px 10px; font-size: 12px; }
+}
+@media (max-width: 380px) {
+  .garant-title { font-size: 19px; }
+  .garant-user { grid-template-columns: 58px minmax(0, 1fr); column-gap: 9px; }
+  .garant-avatar { width: 58px; font-size: 43px; }
+  .garant-content { padding: 10px; font-size: 13px; }
+  .garant-content ul, .garant-content ol { padding-left: 19px; }
+}
+
+/* Final mobile layout override: keep the whole page inside the device viewport. */
+html, body { width:100%; min-width:0; max-width:100%; }
+@media (max-width: 700px) {
+  html, body {
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    margin:0 !important;
+    overflow-x:hidden !important;
+  }
+  .topline, .header, .header-row, .nav, .crumb, .main, .main > .shell,
+  body > footer {
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+  }
+  .shell {
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+  }
+  .header-row {
+    height:auto !important;
+    min-height:64px;
+    padding:10px 12px;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .tagline { max-width:100%; overflow-wrap:anywhere; }
+  .nav { height:auto !important; display:flex; flex-wrap:nowrap; overflow-x:auto; }
+  .nav a { flex:1 0 54px; width:auto; min-width:54px; }
+  .crumb {
+    height:auto !important;
+    min-height:28px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px 12px;
+    padding:7px 10px !important;
+    overflow-wrap:anywhere;
+  }
+  .main { padding:6px 0 16px !important; }
+  .main > .shell { padding:0 8px !important; }
+  .garant-page {
+    display:block !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    margin:6px 0 14px !important;
+    overflow:hidden !important;
+  }
+  .garant-post {
+    display:flex !important;
+    flex-direction:column !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+  }
+  .garant-user, .garant-content, .garant-content .bbWrapper {
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+  }
+  .garant-content {
+    display:block !important;
+    overflow:hidden !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere !important;
+    word-break:normal !important;
+  }
+  .garant-content *,
+  .garant-content .bbWrapper *,
+  .garant-content span,
+  .garant-content b,
+  .garant-content i,
+  .garant-content a,
+  .garant-content li {
+    max-width:100% !important;
+    min-width:0 !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere !important;
+    word-break:normal !important;
+    box-sizing:border-box !important;
+  }
+  .garant-content ul, .garant-content ol {
+    padding-left:20px !important;
+    margin-left:0 !important;
+  }
+  .garant-content li { padding-right:2px; }
+  .garant-content br { display:inline; }
+}
+
+</style>
+</head>
+<body>
+<div class="topline"></div>
+<header class="header"><div class="shell header-row"><div><a href="index.html" class="logo">PROBIV.CC</a><div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div></div><div class="network-ad">ФОРУМ • ПРОФИЛИ • РЕЙТИНГИ</div></div>
+<nav class="shell nav"><a data-link-key="forum" href="index.html"><strong>⌂</strong>Форум</a><a data-link-key="profile" href="profile.html?id=1"><strong>♙</strong>Профиль</a><a data-link-key="search" href="search.html"><strong>⌕</strong>Поиск</a><a data-link-key="rules" href="rules.html"><strong>▤</strong>Правила</a><a data-link-key="help" href="help.html"><strong>?</strong>Помощь</a></nav></header>
+<div class="crumb shell"><span><a href="index.html">PROBIV.CC</a> » Архивная тема</span><span><a href="index.html">Вернуться на форум</a></span></div>
+<main class="main"><div class="shell">
+<article class="garant-page">
+<h1 class="garant-title">Правила работы через Гарант-Сервис (от 15.06.20)</h1>
+<div class="garant-meta">♙ reagent · ◷ 13/12/15</div>
+<div class="garant-locked">🔒 В этой теме нельзя размещать новые ответы.</div>
+<div class="garant-post">
+<aside class="garant-user"><div class="garant-avatar">R</div><div class="garant-username">reagent</div><div>Опытный</div><div class="garant-rank">Ветеран пробива</div><div class="garant-stats"><span>Регистрация:</span><span>4/11/14</span><span>Сообщения:</span><span>1.954</span><span>Репутация:</span><span>5.495</span><span>Реакции:</span><span>7.128</span><span>USDT:</span><span>0</span></div></aside>
+<div itemprop="text" class="garant-content">
+				
+					
+    
+
+<div class="bbWrapper"><span style="font-size: 15px"><b><span style="color: #ff8000">Гарант-Сервис</span> </b></span>- это система, направленная на безопасное и конфиденциальное проведение сделок купли/продажи между продавцами и покупателями на данном форуме.<br>
+<br>
+<span style="color: #008000"><b>Задачи Гарант-Сервиса:</b></span><br>
+<ul>
+<li data-xf-list-type="ul">обеспечение прозрачности проведения сделок</li>
+<li data-xf-list-type="ul">конфиденциальность всех участников сделок</li>
+<li data-xf-list-type="ul">защита пользователей от мошеннических действий</li>
+</ul>Администрацией форума выбран ответственный и безупречный гарант:<br>
+<b>Гарант <a href="/members/harper.31/" class="username " dir="auto" data-user-id="31" data-xf-init="member-tooltip" id="js-XFUniqueId13"><span class="username--style11 username--staff username--moderator username--admin">@Harper</span></a> </b><br>
+<br>
+<span style="color: #008000"><b>Гарантии для покупателя:</b></span><br>
+<ul>
+<li data-xf-list-type="ul">получение товара/услуги в указанный продавцом срок</li>
+<li data-xf-list-type="ul">надлежащее качество товара/услуги</li>
+<li data-xf-list-type="ul">уверенность в конфиденциальности личной информации</li>
+</ul><br>
+<span style="color: #008000"><b>Гарантии для продавца:</b></span><br>
+<ul>
+<li data-xf-list-type="ul">гарантия оплаты в полном объеме товара/услуги и доставки (если входит в условия сделки)</li>
+<li data-xf-list-type="ul">конфиденциальность финансовой информации</li>
+</ul><br>
+<span style="font-size: 15px"><span style="color: #ff8000"><b>Схема работы Гарант-Сервиса:</b></span></span><br>
+1. Передача личного сообщения (ЛС) начинается с отправления подробного описания сделки (подробнее: <u>инструкция по заполнению заявки здесь</u>) от одного из участников (продавец или покупатель)<br>
+2. Передача ЛС от второго участника сделки, как подтверждение соглашения<br>
+3. Покупатель переводит Гарант-Сервису денежные средства. Гарант-Сервис оповещает об этом продавца, а продавец в свою очередь отправляет товар/услугу покупателю.<br>
+3.1. Сумма за услуги гаранта переводится сразу Гарант-Сервису.<br>
+4. Покупатель получает и проверяет заявленное качество товара/услуги при этом информируя о результате Гарант-Сервис.<br>
+Варианты развития событий:<br>
+4.1. Если покупателя всё устраивает, то Гарант-Сервис переводит деньги продавцу и по его желанию оставляет в его теме информационный отзыв об успешной работе через Гарант-Сервис.<br>
+4.2. В случае несоответствия товара/услуги каким-либо параметрам, денежные средства возвращаются к покупателю, а товар - продавцу (если пересылка, то за счет продавца). Либо производится замена товара (в случае договоренности сторон).<br>
+4.3. В случае возникновения спорной ситуации Гарант-Сервис принимает решение в зависимости от личного убеждения и предоставленных доказательств.<br>
+4.4. Если продавец/покупатель нарушают сроки сделки (отправка товара, получение товара или срок проверки товара после получения), то  при таких обстоятельствах берется пауза на 3 суток на случай форс-мажора.<br>
+4.5. При заключении сделки, в случае, если покупатель/продавец игнорирует подтверждение условий сделки, то берется пауза на 1 сутки на случай форс-мажора.<br>
+4,6. В случае расторжения сделки до её завершения, по решению Судьи, комиссия Гаранта оплачивается виновной стороной. Любые ограничения прописанные в правилах сервиса продавца, ущемляющие права покупателя и обязывающие его в одностороннем порядке оплачивать % Гаранта, являются ничтожными.<br>
+<br>
+<br>
+<span style="font-size: 15px"><span style="color: #ff8000"><b>ОСНОВНЫЕ ПРАВИЛА:</b></span></span><br>
+<i><span style="font-size: 15px">1. В случае подозрения на мошенничество со стороны одного из участников сделки, средства, зарезервированные на счете Гарант-Сервиса, замораживаются до выяснения обстоятельств.<br>
+2. Покупатель/продавец несет полную ответственность, если его перевод/перевод ему приведет к блокировке счета/кошелька Гарант-Сервиса.<br>
+3. Общение с Гарант-Сервисом осуществляется ИСКЛЮЧИТЕЛЬНО через личные сообщения в целях безопасности сделки.<br>
+4. Сделки на гаранте конфиденциальны. Публичное разглашение любым способом информации по сделке без разрешения сторон и ( или) Гаранта и Судьи недопустимы. Виновного ждет штраф на усмотрение АГ до 100 000 р или бан.<br>
+5. Гарант-Сервис не несет ответственности за законность сделок, совершаемых сторонами, Гарант-Сервис отвечает только за контроль качества проведения операции купли/продажи.<br>
+6. Способ перевода,сроки ,валюта перевода и выплат обговариваются до заключения сделки.<br>
+7. Перевод средств из одной платежной системы в другую ( между банками - 1.5%, конвертация валют - 5%) или <i>комиссия за перевод внутри одной платежной системы (яд - 3%, сбер - 1% и т.п.)</i>производится за счет продавца/покупателя.<br>
+8.Рекомендуем проводить сделки в одной валюте. Гарант -Сервис не несет ответственности при изменении курса валют в разновалютных сделках.<br>
+9.Если перевод денег на Гарант осуществляется в одной валюте,а получение средств продавцом предполагается в другой,курс валют фиксируется на момент поступления денег на Гарант и средства резервируются в валюте выплат продавцу.<br>
+10.Возврат денег с Гаранта при расторжении  разновалютной сделки  осуществляется в валюте, зарезервированной для выплат продавцу или в валюте покупателя, по курсу, зафиксированному на момент поступления денег на Гарант.<br>
+11.Стороны могут взять на себя риски при изменении курса валют и прописать другой порядок выплат для продавца или покупателя в особых условиях сделки.</span></i><br>
+<br>
+<br>
+<span style="font-size: 15px"><b><span style="color: #ff8000">Платежные системы Гарант-Сервиса:</span> </b></span><br>
+Bitcoin<br>
+Tether TRC20<br>
+<br>
+За реквизитами просьба обращаться в личные сообщения<br>
+<br>
+<span style="color: #ff8000"><b><span style="font-size: 15px">Стоимость услуг Гарант-Сервиса составляет 10%*</span><br>
+<span style="font-size: 15px">** - сделки в криптовалюте 5%, комиссия за перевод оплачивается участниками сделки.</span></b></span><br>
+<i><span style="font-size: 10px"><span style="color: #ff8000">*</span></span><span style="color: #ff0000"><span style="font-size: 10px"> - если сумма сделки более 250 тыс.руб. – комиссия обсуждается с гарантом.<br>
+** - гарант вправе выбрать платёжную систему при проведении сделки.</span></span></i><br>
+<br>
+<span style="font-size: 12px"><i>Комиссия взимается при любом исходе сделки, состоялась ли она или была расторгнута. <br>
+Минимальная комиссия Гарант-Сервиса составляет 10 usdt</i></span><br>
+<br>
+<span style="color: #008000"><b><i><span style="font-size: 15px">P.S.: лучше переплатить 10%, чем потерять  все 100%</span></i></b></span><br>
+<br>
+________________________________________________________________________________________________________________________________________<br>
+<div style="text-align: center"><span style="font-size: 12px"><span style="color: #696969"><i>Гарант-Сервис Probiv предупреждает: </i></span></span>​</div><span style="font-size: 12px"><span style="color: #696969"><i>Нарушение законодательства РФ и прочих государств, резидентом которых является какой-либо участник сделки, в результате операции купли/продажи через систему Гарант-Сервиса, ведет к различного рода ответственности и санкциям со стороны государства-правообладателя. </i></span></span><br>
+<br>
+<div style="text-align: center"><span style="font-size: 12px"><span style="color: #696969"><i>Будьте внимательны и осторожны!</i></span></span>​</div></div>
+				
+			</div>
+</article>
+</div></main><footer>Демонстрационный форум</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="data.js"></script><script src="site.js"></script><script src="supabase-adapter.js"></script>
+</body></html>
