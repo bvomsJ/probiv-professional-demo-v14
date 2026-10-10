@@ -1,4 +1,4 @@
-/* GeniusLab DEMO CORE v9
+/* PROBIV.CC DEMO CORE v9
    Synthetic/local-only forum UI. No real accounts, transactions or external operations.
 */
 (function () {
@@ -812,7 +812,7 @@
     const centerTitle = document.getElementById("refCenterTitle");
     const newestLabel = document.getElementById("refTabRecent");
     const topicsLabel = document.getElementById("refTabTopics");
-    if (centerTitle) centerTitle.textContent = label.centerLatest || "Последние сообщения";
+    if (centerTitle) centerTitle.textContent = (rowsEl.dataset.mode === "recent" ? (label.centerLatest || "Последние сообщения") : (label.centerTopicsTitle || label.centerTopicsTab || "Новые темы"));
     if (newestLabel) newestLabel.textContent = label.centerRecentTab || "Новые сообщения";
     if (topicsLabel) topicsLabel.textContent = label.centerTopicsTab || "Новые темы";
 
@@ -851,7 +851,14 @@
     }
 
     const recentRows = (DEMO_DB.recent || []).filter(function (entry) { const t = recentEntryToThread(entry); return !t || canGuestRead(t); }).slice(0, 35).map(rowFromRecent).join("");
-    const topicRows = (DEMO_DB.threads || []).slice().sort(function (a, b) {
+    const garantTopicRow = `<a class="ref-thread garant-home-topic" href="garant-service.html">
+      <span class="pin">⚑</span>
+      <span class="rtitle"><span class="badge red">ВАЖНО</span>Правила работы через Гарант-Сервис (от 15.06.20)</span>
+      <span class="reply-count">—</span>
+      <span class="last-date">15.06.2020</span>
+      <span class="last-user">reagent</span>
+    </a>`;
+    const topicRows = garantTopicRow + (DEMO_DB.threads || []).slice().sort(function (a, b) {
       return Number(b.id) - Number(a.id);
     }).map(function (t) {
       return rowFromThread(t, t.date);
@@ -859,6 +866,9 @@
 
     function showMode(mode) {
       rowsEl.innerHTML = mode === "topics" ? topicRows : recentRows;
+      if (centerTitle) centerTitle.textContent = mode === "topics"
+        ? (label.centerTopicsTitle || label.centerTopicsTab || "Новые темы")
+        : (label.centerLatest || "Последние сообщения");
       document.querySelectorAll(".ref-tabs span").forEach(function (tab) {
         tab.classList.toggle("active", tab.dataset.mode === mode);
       });
@@ -912,7 +922,7 @@
 
     renderNewUsers();
     renderForumStats();
-    showMode(rowsEl.dataset.mode === "topics" ? "topics" : "recent");
+    showMode(rowsEl.dataset.mode === "recent" ? "recent" : "topics");
     bindProfileLinks(document);
   };
 
@@ -983,18 +993,14 @@
   window.applySiteConfig = function () {
     const site = DEMO_DB.site || {};
 
-    const configuredTitle = String(site.title || "").trim();
-    const brandTitle = (!configuredTitle || configuredTitle.toUpperCase() === "PROBIV.CC") ? "GeniusLab" : configuredTitle;
-    site.title = brandTitle;
-    site.networkAd = "";
     document.querySelectorAll(".logo").forEach(function (x) {
-      x.textContent = brandTitle;
+      x.textContent = site.title || "GeniusLab Forum";
     });
     document.querySelectorAll(".tagline").forEach(function (x) {
       x.textContent = site.subtitle || "";
     });
     document.querySelectorAll(".network-ad").forEach(function (x) {
-      x.textContent = "";
+      x.textContent = site.networkAd || site.topAd || "DEMO";
     });
     document.querySelectorAll(".demo-strip").forEach(function (x) {
       x.textContent = site.demoLabel || "ДЕМО · СИНТЕТИЧЕСКИЕ ДАННЫЕ";

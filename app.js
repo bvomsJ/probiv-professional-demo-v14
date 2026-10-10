@@ -2,7 +2,7 @@ const KEY="probiv_demo_state_v3";
 
 const seed={
   site:{
-    title:"GeniusLab",
+    title:"PROBIV.CC",
     subtitle:"ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ",
     footer:"ЭВАКУАЦИЯ | РЕШЕНИЕ УГОЛОВНЫХ ДЕЛ | ПОМОЩЬ В РОЗЫСКЕ | ПРОВЕРКА НА РАЗРАБОТКУ | КОНСУЛЬТАЦИИ"
   },

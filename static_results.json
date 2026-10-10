@@ -10,6 +10,16 @@
   "note": ""
  },
  {
+  "name": "JS syntax: supabase-config.js",
+  "status": "PASS",
+  "note": ""
+ },
+ {
+  "name": "JS syntax: supabase-adapter.js",
+  "status": "PASS",
+  "note": ""
+ },
+ {
   "name": "Inline <script> syntax (11 pages)",
   "status": "PASS",
   "note": ""
