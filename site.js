@@ -851,7 +851,15 @@
     }
 
     const recentRows = (DEMO_DB.recent || []).filter(function (entry) { const t = recentEntryToThread(entry); return !t || canGuestRead(t); }).slice(0, 35).map(rowFromRecent).join("");
-    const topicRows = (DEMO_DB.threads || []).slice().sort(function (a, b) {
+    const garantServiceRow = `<a class="ref-thread ref-featured-topic" href="garant-service.html">
+      <span class="pin">⚑</span>
+      <span class="rtitle"><span class="badge red">ВАЖНО</span>Правила работы через Гарант-Сервис (от 15.06.20)</span>
+      <span class="reply-count">☏ 0</span>
+      <span class="last-date">13.12.2015</span>
+      <span class="last-user">reagent</span>
+    </a>`;
+
+    const topicRows = garantServiceRow + (DEMO_DB.threads || []).slice().sort(function (a, b) {
       return Number(b.id) - Number(a.id);
     }).map(function (t) {
       return rowFromThread(t, t.date);
@@ -863,6 +871,7 @@
         tab.classList.toggle("active", tab.dataset.mode === mode);
       });
       rowsEl.dataset.mode = mode;
+      if (centerTitle) centerTitle.textContent = mode === "topics" ? "Новые темы" : (label.centerLatest || "Последние сообщения");
     }
 
     document.querySelectorAll(".ref-tabs span[data-mode]").forEach(function (tab) {
@@ -912,7 +921,7 @@
 
     renderNewUsers();
     renderForumStats();
-    showMode(rowsEl.dataset.mode === "topics" ? "topics" : "recent");
+    showMode(rowsEl.dataset.mode === "recent" ? "recent" : "topics");
     bindProfileLinks(document);
   };
 
