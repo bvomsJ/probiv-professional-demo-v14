@@ -5,29 +5,308 @@
 <title>Правила работы через Гарант-Сервис — архивная тема</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css">
 <style>
-/* Styles scoped to this archive page to avoid changing the rest of the forum. */
-.garant-page{font-family:Arial,Helvetica,sans-serif;color:#252525;background:#e9e5d9;border:1px solid #c9c2b2;margin:18px auto 28px;box-shadow:0 1px 4px #0002}
-.garant-page *{box-sizing:border-box}
-.garant-title{font-size:26px;font-weight:400;line-height:1.25;padding:12px 15px 5px;margin:0;color:#222}
-.garant-meta{padding:0 15px 12px;color:#858078;font-size:12px;border-bottom:1px solid #d1cbbd}
-.garant-locked{margin:0;padding:9px 12px;background:#f7f3e8;border-bottom:1px solid #d0c9b8;border-left:4px solid #d99b3d;font-size:13px;color:#514b41}
-.garant-post{display:grid;grid-template-columns:210px minmax(0,1fr);background:#f7f5ec}
-.garant-user{padding:12px 10px;border-right:1px solid #d0cabb;text-align:center;background:#f0ede3;font-size:13px;color:#5e5a53}
-.garant-avatar{display:flex;align-items:center;justify-content:center;width:170px;height:130px;max-width:100%;margin:0 auto 12px;background:#bd2791;color:#f7d8ef;font-size:108px;font-weight:300;line-height:1}
-.garant-username{font-size:17px;font-weight:bold;color:#1c1c82;margin-bottom:6px}
-.garant-rank{background:#3333cc;color:white;padding:5px 4px;margin:8px -10px 12px;font-size:12px}
-.garant-stats{display:grid;grid-template-columns:1fr auto;gap:4px;text-align:left;font-size:12px}
-.garant-stats span:nth-child(2n){text-align:right;color:#333}
-.garant-content{padding:12px 14px 22px;min-width:0;font-size:16px;line-height:1.48;background:#f8f7ef}
-.garant-post-date{display:flex;justify-content:space-between;color:#88857d;font-size:12px;padding-bottom:8px;border-bottom:1px solid #ded9cb;margin-bottom:12px}
-.garant-content p{margin:0 0 14px}.garant-content h3{font-size:16px;margin:20px 0 5px;color:#16833b}.garant-content h3.orange{color:#d99028}.garant-content ul,.garant-content ol{padding-left:28px;margin:4px 0 17px}.garant-content .indent{margin-left:22px}.garant-content .warning{padding:10px 12px;background:#fff4d9;border:1px solid #d9bd78;color:#6e4a14;margin:14px 0;font-size:13px}.garant-content .archive-contact{padding:9px 11px;border-top:1px solid #c9c2b2;margin-top:24px;color:#605a50;font-size:13px;background:#f0ede3}
-.garant-footer{padding:12px;text-align:center;background:#f1eee4;border-top:1px solid #d0cabb;font-size:12px;color:#716b60}
-@media(max-width:700px){.garant-post{grid-template-columns:1fr}.garant-user{border-right:0;border-bottom:1px solid #d0cabb}.garant-avatar{width:110px;height:100px;font-size:80px}.garant-rank{margin-left:0;margin-right:0}.garant-content{font-size:14px;padding:12px}.garant-title{font-size:21px}}
+/* Scoped, responsive styles for the archive topic. */
+.garant-page {
+  width: 100%;
+  max-width: 1500px;
+  min-width: 0;
+  margin: 18px auto 28px;
+  overflow: hidden;
+  border: 1px solid #c9c2b2;
+  background: #e9e5d9;
+  color: #252525;
+  box-shadow: 0 1px 4px #0002;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.45;
+}
+.garant-page,
+.garant-page * { box-sizing: border-box; }
+.garant-page img,
+.garant-page video,
+.garant-page iframe { max-width: 100%; }
+.garant-title {
+  margin: 0;
+  padding: 14px 16px 6px;
+  color: #222;
+  font-size: clamp(20px, 2.1vw, 27px);
+  font-weight: 400;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+.garant-meta {
+  padding: 0 16px 12px;
+  border-bottom: 1px solid #d1cbbd;
+  color: #858078;
+  font-size: 12px;
+}
+.garant-locked {
+  margin: 0;
+  padding: 10px 14px;
+  border-bottom: 1px solid #d0c9b8;
+  border-left: 4px solid #d99b3d;
+  background: #f7f3e8;
+  color: #514b41;
+  font-size: 13px;
+}
+.garant-post {
+  display: grid;
+  grid-template-columns: minmax(175px, 210px) minmax(0, 1fr);
+  align-items: stretch;
+  background: #f7f5ec;
+}
+.garant-user {
+  min-width: 0;
+  padding: 14px 12px;
+  border-right: 1px solid #d0cabb;
+  background: #f0ede3;
+  color: #5e5a53;
+  text-align: center;
+  font-size: 13px;
+}
+.garant-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 170px);
+  aspect-ratio: 1.3 / 1;
+  height: auto;
+  margin: 0 auto 12px;
+  background: #bd2791;
+  color: #f7d8ef;
+  font-size: clamp(64px, 7vw, 108px);
+  font-weight: 300;
+  line-height: 1;
+}
+.garant-username {
+  margin-bottom: 6px;
+  color: #1c1c82;
+  font-size: 17px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.garant-rank {
+  margin: 8px -12px 12px;
+  padding: 6px 4px;
+  background: #3333cc;
+  color: #fff;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.garant-stats {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 5px 8px;
+  text-align: left;
+  font-size: 12px;
+}
+.garant-stats span { min-width: 0; overflow-wrap: anywhere; }
+.garant-stats span:nth-child(2n) { color: #333; text-align: right; }
+.garant-content {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal !important;
+  overflow-x: hidden;
+  padding: 14px clamp(12px, 1.5vw, 22px) 24px;
+  background: #f8f7ef;
+  color: #252525;
+  font-size: clamp(14px, 1vw, 16px);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+.garant-content .bbWrapper { display: block; min-width: 0; width: 100%; max-width: 100%; white-space: normal !important; overflow-wrap: anywhere; word-break: normal; }
+.garant-content span, .garant-content b, .garant-content i { max-width: 100%; }
+.garant-content br { white-space: normal; }
+.garant-content p { margin: 0 0 14px; }
+.garant-content h3 { margin: 20px 0 6px; color: #16833b; font-size: 16px; }
+.garant-content h3.orange { color: #d99028; }
+.garant-content ul,
+.garant-content ol { max-width: 100%; margin: 5px 0 18px; padding-left: 26px; }
+.garant-content li { padding-left: 1px; margin: 2px 0; }
+.garant-content a { overflow-wrap: anywhere; }
+.garant-content .indent { margin-left: 22px; }
+.garant-content .warning {
+  margin: 14px 0;
+  padding: 10px 12px;
+  border: 1px solid #d9bd78;
+  background: #fff4d9;
+  color: #6e4a14;
+  font-size: 13px;
+}
+.garant-content .archive-contact {
+  margin-top: 24px;
+  padding: 10px 12px;
+  border-top: 1px solid #c9c2b2;
+  background: #f0ede3;
+  color: #605a50;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.garant-footer {
+  padding: 12px;
+  border-top: 1px solid #d0cabb;
+  background: #f1eee4;
+  color: #716b60;
+  text-align: center;
+  font-size: 12px;
+}
+@media (max-width: 900px) {
+  .garant-page { margin: 12px auto 22px; }
+  .garant-post { grid-template-columns: minmax(150px, 175px) minmax(0, 1fr); }
+  .garant-user { padding: 12px 10px; }
+  .garant-rank { margin-left: -10px; margin-right: -10px; }
+}
+@media (max-width: 640px) {
+  .garant-title { padding: 12px 12px 6px; font-size: 21px; }
+  .garant-meta { padding: 0 12px 10px; }
+  .garant-post { grid-template-columns: minmax(0, 1fr); }
+  .garant-user {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    grid-template-areas:
+      "avatar username"
+      "avatar role"
+      "avatar rank"
+      "stats stats";
+    align-content: start;
+    align-items: center;
+    column-gap: 12px;
+    row-gap: 4px;
+    padding: 12px;
+    border-right: 0;
+    border-bottom: 1px solid #d0cabb;
+    text-align: left;
+  }
+  .garant-avatar {
+    grid-area: avatar;
+    width: 72px;
+    aspect-ratio: 1;
+    margin: 0;
+    font-size: 52px;
+  }
+  .garant-username { grid-area: username; margin: 0; font-size: 16px; }
+  .garant-username + div { grid-area: role; align-self: start; }
+  .garant-rank { grid-area: rank; justify-self: start; margin: 0; padding: 4px 7px; }
+  .garant-stats {
+    grid-area: stats;
+    grid-template-columns: minmax(0, 1fr) auto;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #d8d1c3;
+  }
+  .garant-content { padding: 12px 13px 20px; font-size: 14px; line-height: 1.5; }
+  .garant-content ul, .garant-content ol { padding-left: 22px; }
+  .garant-content br + br { line-height: 1.1; }
+  .garant-locked { padding: 9px 10px; font-size: 12px; }
+}
+@media (max-width: 380px) {
+  .garant-title { font-size: 19px; }
+  .garant-user { grid-template-columns: 58px minmax(0, 1fr); column-gap: 9px; }
+  .garant-avatar { width: 58px; font-size: 43px; }
+  .garant-content { padding: 10px; font-size: 13px; }
+  .garant-content ul, .garant-content ol { padding-left: 19px; }
+}
+
+/* Final mobile layout override: keep the whole page inside the device viewport. */
+html, body { width:100%; min-width:0; max-width:100%; }
+@media (max-width: 700px) {
+  html, body {
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    margin:0 !important;
+    overflow-x:hidden !important;
+  }
+  .topline, .header, .header-row, .nav, .crumb, .main, .main > .shell,
+  body > footer {
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+  }
+  .shell {
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+  }
+  .header-row {
+    height:auto !important;
+    min-height:64px;
+    padding:10px 12px;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .tagline { max-width:100%; overflow-wrap:anywhere; }
+  .nav { height:auto !important; display:flex; flex-wrap:nowrap; overflow-x:auto; }
+  .nav a { flex:1 0 54px; width:auto; min-width:54px; }
+  .crumb {
+    height:auto !important;
+    min-height:28px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px 12px;
+    padding:7px 10px !important;
+    overflow-wrap:anywhere;
+  }
+  .main { padding:6px 0 16px !important; }
+  .main > .shell { padding:0 8px !important; }
+  .garant-page {
+    display:block !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    margin:6px 0 14px !important;
+    overflow:hidden !important;
+  }
+  .garant-post {
+    display:flex !important;
+    flex-direction:column !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+  }
+  .garant-user, .garant-content, .garant-content .bbWrapper {
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+  }
+  .garant-content {
+    display:block !important;
+    overflow:hidden !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere !important;
+    word-break:normal !important;
+  }
+  .garant-content *,
+  .garant-content .bbWrapper *,
+  .garant-content span,
+  .garant-content b,
+  .garant-content i,
+  .garant-content a,
+  .garant-content li {
+    max-width:100% !important;
+    min-width:0 !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere !important;
+    word-break:normal !important;
+    box-sizing:border-box !important;
+  }
+  .garant-content ul, .garant-content ol {
+    padding-left:20px !important;
+    margin-left:0 !important;
+  }
+  .garant-content li { padding-right:2px; }
+  .garant-content br { display:inline; }
+}
+
 </style>
 </head>
 <body>
 <div class="topline"></div>
-<header class="header"><div class="shell header-row"><div><a href="index.html" class="logo">PROBIV.CC</a><div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div></div><div class="network-ad">ФОРУМ • ПРОФИЛИ • РЕЙТИНГИ</div></div>
+<header class="header"><div class="shell header-row"><div><a href="index.html" class="logo">PROBIV.CC</a><div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div></div></div>
 <nav class="shell nav"><a data-link-key="forum" href="index.html"><strong>⌂</strong>Форум</a><a data-link-key="profile" href="profile.html?id=1"><strong>♙</strong>Профиль</a><a data-link-key="search" href="search.html"><strong>⌕</strong>Поиск</a><a data-link-key="rules" href="rules.html"><strong>▤</strong>Правила</a><a data-link-key="help" href="help.html"><strong>?</strong>Помощь</a></nav></header>
 <div class="crumb shell"><span><a href="index.html">PROBIV.CC</a> » Архивная тема</span><span><a href="index.html">Вернуться на форум</a></span></div>
 <main class="main"><div class="shell">
@@ -37,7 +316,7 @@
 <div class="garant-locked">🔒 В этой теме нельзя размещать новые ответы.</div>
 <div class="garant-post">
 <aside class="garant-user"><div class="garant-avatar">R</div><div class="garant-username">reagent</div><div>Опытный</div><div class="garant-rank">Ветеран пробива</div><div class="garant-stats"><span>Регистрация:</span><span>4/11/14</span><span>Сообщения:</span><span>1.954</span><span>Репутация:</span><span>5.495</span><span>Реакции:</span><span>7.128</span><span>USDT:</span><span>0</span></div></aside>
-<div itemprop="text">
+<div itemprop="text" class="garant-content">
 				
 					
     
@@ -115,6 +394,6 @@ ________________________________________________________________________________
 				
 			</div>
 </article>
-</div></main><footer>Демонстрационный форум</footer>
+</div></main><footer>Форум</footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="data.js"></script><script src="site.js"></script><script src="supabase-adapter.js"></script>
 </body></html>
