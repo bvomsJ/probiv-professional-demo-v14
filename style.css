@@ -143,3 +143,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 body:before {
     display: none !important;
 }
+body:after {
+    content: none !important;
+    display: none !important;
+}
+
+body:before {
+    display: none !important;
+}
