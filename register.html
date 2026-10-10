@@ -7,10 +7,9 @@
 <header class="header"><div class="shell header-row"><div><a href="index.html" class="logo">GeniusLab Forum</a><div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div></div></div>
 <nav class="shell nav"><a data-link-key="forum" href="index.html"><strong>⌂</strong>Форум</a><a data-link-key="profile" href="profile.html?id=1"><strong>♙</strong>Профиль</a><a data-link-key="search" href="search.html"><strong>⌕</strong>Поиск</a><a data-link-key="rules" href="rules.html"><strong>▤</strong>Правила</a><a data-link-key="help" href="help.html"><strong>?</strong>Помощь</a><a data-link-key="admin" href="admin.html"><strong>⚙</strong>Админ</a></nav></header>
 <div class="crumb"><span><a href="index.html">GeniusLab</a> » Регистрация</span><span data-auth><a href="login.html">Вход</a> · <a href="register.html">Регистрация</a></span></div>
-<div class="demo-strip shell">ДЕМО · СИНТЕТИЧЕСКИЕ ДАННЫЕ · НЕ РЕАЛЬНАЯ РЕГИСТРАЦИЯ</div>
 <main class="main"><div class="shell"><section class="content"><div class="invite-card">
 <div class="lock-icon">👤</div><h1 class="page-title">Регистрация участника</h1>
-<p>Аккаунт создаётся через Supabase Auth. Для регистрации нужен действующий код приглашения, который проверяется триггером в базе данных.</p>
+<p>Для регистрации нужен действующий код приглашения.</p>
 <div class="form-row"><label>Email</label><input id="email" class="input" type="email" autocomplete="email" placeholder="you@example.com"></div>
 <div class="form-row"><label>Имя пользователя</label><input id="name" class="input" placeholder="Например: DemoUser" autocomplete="username"></div>
 <div class="form-row"><label>Пароль</label><input id="pass" class="input" type="password" autocomplete="new-password"></div>
@@ -47,7 +46,7 @@
       try {
         await window.SupabaseAdapter.signUp(email, pass, name, code);
         msg.className="invite-message";
-        msg.textContent="Запрос регистрации отправлен. Если в Supabase включено подтверждение email, подтвердите адрес из письма, затем войдите.";
+        msg.textContent="Запрос регистрации отправлен.";
         return;
       } catch(e) { fail("Регистрация не выполнена: " + (e.message || String(e))); return; }
       finally { btn.disabled=false; }
@@ -66,7 +65,7 @@
         id:id,name:name,role:"Участник",rating:0,posts:0,likes:0,dislikes:0,
         joined:todayStr(),avatar:name.slice(0,1).toUpperCase(),color:"#65745c",
         online:true,usdt:0,guarant:0,deposits:0,awards:["Новый участник"],
-        bio:"Новый синтетический профиль демонстрационного форума.",status:"Участник",passHash:passHash
+        bio:"Новый профиль форума.",status:"Участник",passHash:passHash
       };
 
       DEMO_DB.users.push(user);
@@ -77,7 +76,7 @@
         DEMO_DB.users.pop();
         invite.uses-=1;
         DEMO_DB.stats.users=Math.max(0,DEMO_DB.stats.users-1);
-        fail("Аккаунт не создан: не удалось сохранить данные в браузере.");
+        fail("Аккаунт не создан: Не удалось создать аккаунт.");
         return;
       }
 
