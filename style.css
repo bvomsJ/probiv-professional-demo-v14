@@ -146,3 +146,7 @@ body:before {
 /* GeniusLab header and homepage topic-first layout */
 .header-row{justify-content:flex-start;gap:24px}.logo{white-space:normal}.ref-thread.garant-home-topic .rtitle{font-weight:bold}
 @media(max-width:700px){.ref-toolbar{grid-template-columns:minmax(0,1fr) auto 24px}.ref-tabs span{padding:0 7px;font-size:10px}.ref-thread{grid-template-columns:17px minmax(0,1fr) 34px}.ref-thread .last-date,.ref-thread .last-user{display:none}.ref-thread .rtitle{white-space:normal;overflow-wrap:anywhere}}
+
+.demo-strip {
+    display: none !important;
+}
