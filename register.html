@@ -10,7 +10,7 @@
 <div class="demo-strip shell">ДЕМО · СИНТЕТИЧЕСКИЕ ДАННЫЕ · НЕ РЕАЛЬНАЯ РЕГИСТРАЦИЯ</div>
 <main class="main"><div class="shell"><section class="content"><div class="invite-card">
 <div class="lock-icon">👤</div><h1 class="page-title">Регистрация участника</h1>
-<p>Для регистрации нужен действующий код приглашения. После создания аккаунта войдите, используя указанные данные.</p>
+<p>Аккаунт создаётся через Supabase Auth. Для регистрации нужен действующий код приглашения, который проверяется триггером в базе данных.</p>
 <div class="form-row"><label>Email</label><input id="email" class="input" type="email" autocomplete="email" placeholder="you@example.com"></div>
 <div class="form-row"><label>Имя пользователя</label><input id="name" class="input" placeholder="Например: DemoUser" autocomplete="username"></div>
 <div class="form-row"><label>Пароль</label><input id="pass" class="input" type="password" autocomplete="new-password"></div>
@@ -47,7 +47,7 @@
       try {
         await window.SupabaseAdapter.signUp(email, pass, name, code);
         msg.className="invite-message";
-        msg.textContent="Запрос регистрации отправлен. Если потребуется подтверждение электронной почты, перейдите по ссылке из письма, затем войдите.";
+        msg.textContent="Запрос регистрации отправлен. Если в Supabase включено подтверждение email, подтвердите адрес из письма, затем войдите.";
         return;
       } catch(e) { fail("Регистрация не выполнена: " + (e.message || String(e))); return; }
       finally { btn.disabled=false; }
