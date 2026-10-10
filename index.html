@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>geniuslab — форум</title>
+<title>GeniusLab — форум</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,9 +12,10 @@
 <header class="header">
   <div class="shell header-row">
     <div>
-      <a class="logo" href="index.html">geniuslab</a>
+      <a class="logo" href="index.html">GeniusLab</a>
       <div class="tagline">ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ</div>
     </div>
+    
   </div>
   <nav class="shell nav">
     <a data-link-key="forum" href="index.html"><strong>⌂</strong>Форум</a>
@@ -27,7 +28,7 @@
 </header>
 
 <div class="crumb">
-  <span>geniuslab » Форум</span>
+  <span>GeniusLab » Форум</span>
   <span data-auth>
     <a href="login.html">Вход</a> · <a href="register.html">Регистрация</a> · <a href="search.html">Поиск</a>
   </span>
@@ -51,10 +52,10 @@
 
       <section class="ref-center">
         <div class="ref-toolbar">
-          <div><b id="refCenterTitle">Новые темы</b></div>
+          <div><b id="refCenterTitle">Последние сообщения</b></div>
           <div class="ref-tabs" role="tablist">
-            <span id="refTabTopics" data-mode="topics" class="active">Новые темы</span>
-            <span id="refTabRecent" data-mode="recent">Новые сообщения</span>
+            <span id="refTabRecent" data-mode="recent" class="active">Новые сообщения</span>
+            <span id="refTabTopics" data-mode="topics">Новые темы</span>
           </div>
           <button type="button" class="ref-refresh" onclick="location.reload()" aria-label="Обновить">↻</button>
         </div>
@@ -122,7 +123,7 @@
   </div>
 </main>
 
-<footer>Форум</footer>
+<footer>Демонстрационный форум • синтетические данные • макет интерфейса</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="data.js"></script><script src="site.js"></script><script src="supabase-adapter.js"></script>
 <script>

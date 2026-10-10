@@ -1,4 +1,4 @@
-/* PROBIV.CC DEMO CORE v9
+/* GeniusLab DEMO CORE v9
    Synthetic/local-only forum UI. No real accounts, transactions or external operations.
 */
 (function () {
@@ -851,15 +851,7 @@
     }
 
     const recentRows = (DEMO_DB.recent || []).filter(function (entry) { const t = recentEntryToThread(entry); return !t || canGuestRead(t); }).slice(0, 35).map(rowFromRecent).join("");
-    const garantServiceRow = `<a class="ref-thread ref-featured-topic" href="garant-service.html">
-      <span class="pin">⚑</span>
-      <span class="rtitle"><span class="badge red">ВАЖНО</span>Правила работы через Гарант-Сервис (от 15.06.20)</span>
-      <span class="reply-count">☏ 0</span>
-      <span class="last-date">13.12.2015</span>
-      <span class="last-user">reagent</span>
-    </a>`;
-
-    const topicRows = garantServiceRow + (DEMO_DB.threads || []).slice().sort(function (a, b) {
+    const topicRows = (DEMO_DB.threads || []).slice().sort(function (a, b) {
       return Number(b.id) - Number(a.id);
     }).map(function (t) {
       return rowFromThread(t, t.date);
@@ -871,7 +863,6 @@
         tab.classList.toggle("active", tab.dataset.mode === mode);
       });
       rowsEl.dataset.mode = mode;
-      if (centerTitle) centerTitle.textContent = mode === "topics" ? "Новые темы" : (label.centerLatest || "Последние сообщения");
     }
 
     document.querySelectorAll(".ref-tabs span[data-mode]").forEach(function (tab) {
@@ -921,7 +912,7 @@
 
     renderNewUsers();
     renderForumStats();
-    showMode(rowsEl.dataset.mode === "recent" ? "recent" : "topics");
+    showMode(rowsEl.dataset.mode === "topics" ? "topics" : "recent");
     bindProfileLinks(document);
   };
 
@@ -992,14 +983,18 @@
   window.applySiteConfig = function () {
     const site = DEMO_DB.site || {};
 
+    const configuredTitle = String(site.title || "").trim();
+    const brandTitle = (!configuredTitle || configuredTitle.toUpperCase() === "PROBIV.CC") ? "GeniusLab" : configuredTitle;
+    site.title = brandTitle;
+    site.networkAd = "";
     document.querySelectorAll(".logo").forEach(function (x) {
-      x.textContent = site.title || "PROBIV.CC";
+      x.textContent = brandTitle;
     });
     document.querySelectorAll(".tagline").forEach(function (x) {
       x.textContent = site.subtitle || "";
     });
     document.querySelectorAll(".network-ad").forEach(function (x) {
-      x.textContent = site.networkAd || site.topAd || "DEMO";
+      x.textContent = "";
     });
     document.querySelectorAll(".demo-strip").forEach(function (x) {
       x.textContent = site.demoLabel || "ДЕМО · СИНТЕТИЧЕСКИЕ ДАННЫЕ";

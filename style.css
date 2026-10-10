@@ -69,7 +69,6 @@ body:before{content:"ДЕМО • СИНТЕТИЧЕСКИЙ МАКЕТ • НЕ
 .ref-thread{display:grid;grid-template-columns:17px 1fr 42px 104px 82px;gap:5px;align-items:center;min-height:25px;padding:2px 5px;background:rgba(240,236,225,.96);border-bottom:1px solid #d7d0c2;color:#5d5548;text-decoration:none}
 .ref-thread:nth-child(even){background:rgba(235,230,217,.96)}
 .ref-thread:hover{background:#ddd6c7}
-.ref-featured-topic .rtitle{font-weight:600}
 .ref-thread .pin{font-size:11px;color:#705a35;text-align:center}
 .ref-thread .rtitle{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px}
 .ref-thread .rtitle .badge{display:inline-block;color:#fff;font-size:7px;font-weight:bold;line-height:13px;height:13px;padding:0 4px;margin-right:4px;vertical-align:1px;border-radius:2px;background:#c59b32}
@@ -143,11 +142,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 body:before {
     display: none !important;
 }
-body:after {
-    content: none !important;
-    display: none !important;
-}
 
-body:before {
-    display: none !important;
-}
+/* GeniusLab: remove the legacy right-side header promo panel globally. */
+.network-ad{display:none!important}
+.header-row{justify-content:flex-start!important}

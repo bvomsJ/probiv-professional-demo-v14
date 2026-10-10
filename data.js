@@ -1,14 +1,13 @@
 window.DEMO_DB = {
 site:{
-  title:"PROBIV.CC",
+  title:"GeniusLab",
   subtitle:"ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ",
   topAd:"РЕКЛАМНЫЙ БЛОК · DEMO",
   heroBanners:["ДЕМОНСТРАЦИОННАЯ ПЛОЩАДКА","АНАЛИЗ • ЗАЩИТА • СОПРОВОЖДЕНИЕ"],
   footer:"ДЕМОНСТРАЦИОННЫЙ ФОРУМ • СИНТЕТИЧЕСКИЕ ДАННЫЕ",
   demoLabel:"ДЕМО · СИНТЕТИЧЕСКИЕ ДАННЫЕ · НЕ РЕАЛЬНЫЕ ПОЛЬЗОВАТЕЛИ И ОПЕРАЦИИ",
   background:"background.png",
-  networkAd:"ДЕМО-ФОРУМ • ПРОФИЛИ • РЕЙТИНГИ"
-},
+  networkAd:""},
 media:[],
 pages:{
   rules:"<p><b>1. Общие положения.</b> Этот сайт является демонстрационным макетом.</p><p><b>2. Контент.</b> Все пользователи, сообщения и статистика вымышлены.</p><p><b>3. Персональные данные.</b> Не размещайте реальные персональные данные.</p><p><b>4. Модерация.</b> Администратор может изменять или удалять содержимое тем.</p>",
@@ -206,16 +205,19 @@ invites:[{code:"DEMO-2026",label:"Демонстрационное пригла�
     db.invites = mergeSeedArray(db.invites, SEED.invites || [], "code");
   }
   db.site = fillDefaults(db.site, {
-    title: "PROBIV.CC",
+    title: "GeniusLab",
     subtitle: "ПРОВЕРЯЕМ • НЕПРОВЕРЯЕМОЕ • ОБСУЖДАЕМ • НЕОБЫЧНОЕ",
     footer: "ДЕМОНСТРАЦИОННЫЙ ФОРУМ • СИНТЕТИЧЕСКИЕ ДАННЫЕ",
     demoLabel: "ДЕМО · СИНТЕТИЧЕСКИЕ ДАННЫЕ · НЕ РЕАЛЬНЫЕ ПОЛЬЗОВАТЕЛИ И ОПЕРАЦИИ",
     background: "background.png",
-    networkAd: "ДЕМО-ФОРУМ • ПРОФИЛИ • РЕЙТИНГИ",
+    networkAd:"",
     heroBanners: ["ДЕМОНСТРАЦИОННАЯ ПЛОЩАДКА", "АНАЛИЗ • ЗАЩИТА • СОПРОВОЖДЕНИЕ", ""],
     mediaSlots: {},
     homeLabels: {}
   });
+
+  if (!db.site.title || String(db.site.title).trim().toUpperCase() === "PROBIV.CC") db.site.title = "GeniusLab";
+  db.site.networkAd = "";
 
   db.media = Array.isArray(db.media) ? db.media : [];
   db.pages = fillDefaults(db.pages, { rules: "", help: "" });
